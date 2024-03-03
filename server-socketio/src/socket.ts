@@ -1,7 +1,7 @@
 import { useSocketServer } from "socket-controllers";
 import { Server } from "socket.io";
 
-export default (httpServer) => {
+export const socketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
       origin: "*",

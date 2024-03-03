@@ -1,15 +1,11 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
 import "reflect-metadata";
-import app from "./app";
-var debug = require("debug")("socketio-server:server");
-import * as http from "http";
-import socketServer from "./socket";
-import { config as loadEnv } from 'dotenv';
+import { app } from "./app";
+const debug = require("debug")("socketio-server:server");
+import http from "http";
+import { socketServer } from "./socket";
+import { config as loadEnv } from "dotenv";
 
 loadEnv();
 
@@ -17,14 +13,14 @@ loadEnv();
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || 9000);
+const port = normalizePort(process.env.PORT || 9000);
 app.set("port", port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -41,7 +37,7 @@ const io = socketServer(server);
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -65,18 +61,16 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+  const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case "EACCES":
       console.error(bind + " requires elevated privileges");
       process.exit(1);
-      break;
     case "EADDRINUSE":
       console.error(bind + " is already in use");
       process.exit(1);
-      break;
     default:
       throw error;
   }
@@ -87,8 +81,8 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  const addr = server.address();
+  const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 
   console.log("Server Running on Port: ", port);
