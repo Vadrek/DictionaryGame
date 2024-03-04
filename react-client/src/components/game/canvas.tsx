@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import gameService from "../../services/gameService";
 import { Player, Square } from "../../services/gameService/type";
-import socketService from "../../services/socketService";
+import { socketService } from "../../services/socketService";
 import { roundTwo } from "../../utils";
 import "./canvas.css";
 import { colorSquare, writeText } from "./helpers";
