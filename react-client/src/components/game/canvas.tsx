@@ -1,10 +1,10 @@
 import { useRef, useEffect, useState } from "react";
-import gameService from "../../services/gameService";
+import { gameService } from "../../services/gameService";
 import { Player, Square } from "../../services/gameService/type";
 import { socketService } from "../../services/socketService";
 import { roundTwo } from "../../utils";
-import "./canvas.css";
 import { colorSquare, writeText } from "./helpers";
+import "./canvas.css";
 
 const PIXEL_BY_SQUARE = 10;
 
@@ -77,7 +77,7 @@ export function Canvas() {
         });
       }
     }
-  }, []); // Empty array ensures that effect is only run on mount and unmount
+  }, []);
 
   useEffect(() => {
     document.addEventListener("keydown", function (event) {
@@ -95,27 +95,14 @@ export function Canvas() {
           colorSquare(`${r}-${c}`, board[r][c].color);
         }
       }
-      //   const rowHeight = Math.round(maxHeight.current / nbRows.current);
-      //   const colWidth = Math.round(maxWidth.current / nbCols.current);
-
-      //   const rowDisplayHeight = ratioY.current / rowHeight;
-      //   const colDisplayWidth = ratioX.current / colWidth;
-
-      //   if (players) {
-      //     players.forEach((player) => {
-      //       const goodRow = Math.floor(player.y * rowDisplayHeight);
-      //       const goodCol = Math.floor(player.x * colDisplayWidth);
-      //       colorSquare(`${goodRow}-${goodCol}`, player.color);
-      //     });
-      //   }
     };
 
     const draw = (ctx: CanvasRenderingContext2D, players: Player[] = []) => {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
       players.forEach(function ({ x, y, size, color }) {
+        ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
         ctx.beginPath();
-        //   ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
         const xDisplay = (x - size / 2) * ratioX.current;
         const yDisplay = (y - size / 2) * ratioY.current;
         ctx.rect(
@@ -127,9 +114,6 @@ export function Canvas() {
         ctx.fillStyle = color;
         ctx.fill();
         writeText(ctx, { x: xDisplay, y: yDisplay, text: `x=${x} y=${y}` });
-
-        // ctx.fillStyle = "black";
-        // ctx.fillText(`x=${x} y=${y}`, x, y);
       });
     };
 
@@ -141,7 +125,6 @@ export function Canvas() {
           ({ players, board }) => {
             draw(context, players);
             updateMatrix(players, board);
-            // setBoard(board);
           }
         );
       }

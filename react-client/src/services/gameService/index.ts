@@ -28,4 +28,4 @@ class GameService {
   }
 }
 
-export default new GameService();
+export const gameService = new GameService();
