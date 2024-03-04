@@ -164,20 +164,18 @@ export function Canvas() {
   return (
     <div>
       <div className="container">
-        {board.map((row, rowIdx) => {
-          return (
-            <div key={rowIdx} className="test-row">
-              {row.map((column, columnIdx) => (
-                <div
-                  key={rowIdx.toString() + "-" + columnIdx.toString()}
-                  id={rowIdx.toString() + "-" + columnIdx.toString()}
-                  className="test-square"
-                  style={{ backgroundColor: column.color }}
-                ></div>
-              ))}
-            </div>
-          );
-        })}
+        {board.map((row, rowIdx) => (
+          <div key={rowIdx} className="test-row">
+            {row.map((column, columnIdx) => (
+              <div
+                key={rowIdx.toString() + "-" + columnIdx.toString()}
+                id={rowIdx.toString() + "-" + columnIdx.toString()}
+                className="test-square"
+                style={{ backgroundColor: column.color }}
+              ></div>
+            ))}
+          </div>
+        ))}
         <canvas key="my-canvas" className="canvas" ref={canvasRef} />
       </div>
     </div>
