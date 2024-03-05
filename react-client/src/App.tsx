@@ -1,8 +1,9 @@
-import { Canvas } from "./components/game/canvas";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import styles from "./App.module.css";
+import { Canvas } from "./components/canvas";
 import { Home } from "./pages/Home";
+
+import styles from "./App.module.css";
 
 function App() {
   const welcomeText = "Welcome :)";
