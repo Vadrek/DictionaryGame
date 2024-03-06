@@ -127,4 +127,14 @@ export class MainController {
       time: new Date().toISOString(),
     };
   }
+
+  @OnMessage("send_msg")
+  public answerChat(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody()
+    data: any
+  ) {
+    console.log("answerChat");
+    socket.emit("receive_msg", data);
+  }
 }
