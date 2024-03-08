@@ -10,7 +10,13 @@ export default function Home() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [roomId, setroomId] = useState("11");
 
-  const server_url = process.env.REACT_APP_API_URL || "http://localhost:9000";
+  console.log("process.env.REACT_APP_API_URL", process.env.REACT_APP_API_URL);
+  console.log(
+    "process.env.NEXT_PUBLIC_API_URL",
+    process.env.NEXT_PUBLIC_API_URL
+  );
+  const server_url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
+  console.log("server_url", server_url);
   const socket = io(server_url);
 
   const handleJoin = () => {
