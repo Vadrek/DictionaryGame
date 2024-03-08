@@ -24,5 +24,8 @@
     "typescript": "5.1.6",
     "utf-8-validate": "^6.0.3",
     "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
   }
 }
