@@ -1,0 +1,26 @@
+.main_div {
+  height: 100vh;
+  widows: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.definitionText {
+  width: 600px;
+}
+
+.formItem {
+  display: flex;
+  justify-content: center;
+}
+
+.definitionResult {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  white-space: pre-wrap;
+}
