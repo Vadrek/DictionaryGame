@@ -2,7 +2,7 @@
 import { useState } from "react";
 // import { socket } from "@/socket";
 import styles from "./page.module.css";
-import { ChatPage } from "@/components/page";
+import { ChatCompo } from "@/components/ChatCompo";
 import { getSocket } from "@/socket/singleton";
 
 export default function Home() {
@@ -56,7 +56,7 @@ export default function Home() {
         </button>
       </div>
       <div style={{ display: !showChat ? "none" : "" }}>
-        <ChatPage socket={socket} roomId={roomId} username={userName} />
+        <ChatCompo socket={socket} roomId={roomId} username={userName} />
       </div>
     </div>
   );

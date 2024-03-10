@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import style from "./chat.module.css";
+import style from "./ChatCompo.module.css";
 
 interface IMsgDataTypes {
   roomId: String | number;
@@ -9,7 +9,7 @@ interface IMsgDataTypes {
   time: String;
 }
 
-export const ChatPage = ({ socket, username, roomId }: any) => {
+export const ChatCompo = ({ socket, username, roomId }: any) => {
   const [currentMsg, setCurrentMsg] = useState("");
   const [chat, setChat] = useState<IMsgDataTypes[]>([]);
 
