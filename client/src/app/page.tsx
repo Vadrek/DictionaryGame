@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import { getSocket } from "@/socket/singleton";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
+import { ChatCompo } from "@/components/ChatCompo";
 
 type FieldType = {
   definition: string;
@@ -23,7 +24,7 @@ export default function Home() {
   return (
     <Row>
       <Col span={8} style={{ backgroundColor: "aliceblue" }}>
-        col-8
+        <ChatCompo socket={socket} roomId={"23"} username={"Bob"} />
       </Col>
       <Col span={16}>
         <div>

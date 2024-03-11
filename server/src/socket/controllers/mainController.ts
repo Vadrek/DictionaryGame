@@ -5,6 +5,7 @@ import {
   OnDisconnect,
   OnMessage,
   SocketController,
+  SocketIO,
 } from "socket-controllers";
 import { Socket } from "socket.io";
 
@@ -137,11 +138,12 @@ export class MainController {
 
   @OnMessage("send_msg")
   public answerChat(
+    @SocketIO() io: any,
     @ConnectedSocket() socket: Socket,
-    @MessageBody()
-    data: any
+    @MessageBody() data: any
   ) {
     console.log("answerChat");
-    socket.emit("receive_msg", data);
+    // socket.emit("receive_msg", data);
+    io.emit("receive_msg", data); // broadcast to all
   }
 }

@@ -8,7 +8,7 @@ export default function Home() {
   const [showChat, setShowChat] = useState(true);
   const [userName, setUserName] = useState("John");
   const [showSpinner, setShowSpinner] = useState(false);
-  const [roomId, setroomId] = useState("11");
+  const [roomId, setroomId] = useState("23");
   const socket = getSocket();
 
   const handleJoin = () => {
