@@ -2,17 +2,24 @@
 import { Button, Col, Form, Row, type FormProps } from "antd";
 import styles from "./page.module.css";
 
-import { getSocket } from "@/socket/singleton";
+// import { getSocket } from "@/socket/singleton";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { ChatCompo } from "@/components/ChatCompo";
+// import { useSocket } from "@/socket/useSocketHook";
+import {
+  useIsSocketConnected,
+  useSocketIoClient,
+} from "@/hooks/useSocketIoClient";
 
 type FieldType = {
   definition: string;
 };
 
 export default function Home() {
-  const socket = getSocket();
+  // const socket = useSocket();
+  const socket = useSocketIoClient();
+  const isSocketConnected = useIsSocketConnected();
 
   const [definition, setDefinition] = useState<string>("");
 

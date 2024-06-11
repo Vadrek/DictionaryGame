@@ -47,13 +47,6 @@ export class MainController {
 
   @OnConnect()
   public onConnection(@ConnectedSocket() socket: Socket) {
-    console.log(
-      "New Socket connected: ",
-      socket.id,
-      "length",
-      Object.keys(this.players).length
-    );
-
     this.players[socket.id] = {
       x: Math.floor(Math.random() * this.xMax),
       y: Math.floor(Math.random() * this.yMax),
@@ -62,6 +55,12 @@ export class MainController {
       color: getRandomColor(),
     };
     socket.emit("init_board", this.board);
+    console.log(
+      "New Socket connected: ",
+      socket.id,
+      "length",
+      Object.keys(this.players).length
+    );
 
     setInterval(() => {
       this.clearOldColors();

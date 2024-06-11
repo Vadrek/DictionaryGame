@@ -7,17 +7,15 @@ import { colorSquare, writeText } from "./helpers";
 import "./canvas.css";
 
 import styles from "./App.module.css";
-import { getSocket } from "@/socket/singleton";
+// import { getSocket } from "@/socket/singleton";
 import { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
+// import { DefaultEventsMap } from "@socket.io/component-emitter";
+// import { useSocket } from "@/socket/useSocketHook";
+import { useSocketIoClient } from "@/hooks/useSocketIoClient";
 
 const PIXEL_BY_SQUARE = 10;
 
-function Canvas({
-  socket,
-}: {
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>;
-}) {
+function Canvas({ socket }: { socket: any }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const keystate: Record<string, boolean> = {};
 
@@ -162,7 +160,12 @@ function Canvas({
 }
 
 function CanvasPage() {
-  const socket = getSocket();
+  // const socket = useSocket();
+  const socketClient = useSocketIoClient();
+  console.log("socketClient", socketClient);
+  const socket = socketClient?.socket;
+  console.log("hey canvas socket", socket);
+
   return (
     <div className={styles.appContainer}>
       <h1 className={styles.welcomeText}>{"welcomeText"}</h1>
