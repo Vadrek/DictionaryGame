@@ -1,66 +1,43 @@
 "use client";
-import { Button, Col, Form, Row, type FormProps } from "antd";
-import styles from "./page.module.css";
+import { useEffect, useState } from "react";
+import { Col, Row } from "antd";
+import { ChatCompo } from "@/components/chatWindow/ChatCompo";
 
-// import { getSocket } from "@/socket/singleton";
-import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
-import { ChatCompo } from "@/components/ChatCompo";
-// import { useSocket } from "@/socket/useSocketHook";
-import {
-  useIsSocketConnected,
-  useSocketIoClient,
-} from "@/hooks/useSocketIoClient";
+import { GameCompo } from "@/components/gameWindow/GameCompo";
+import { useSocket } from "@/socket/hook";
 
-type FieldType = {
-  definition: string;
-};
+const randomNames = [
+  "Alice",
+  "Bob",
+  "Charlie",
+  "David",
+  "Eve",
+  "Frank",
+  "Grace",
+  "Heidi",
+  "Ivan",
+  "Judy",
+  "Mallory",
+  "Oscar",
+];
 
 export default function Home() {
-  // const socket = useSocket();
-  const socket = useSocketIoClient();
-  const isSocketConnected = useIsSocketConnected();
+  const [randomUsername, setRandomUsername] = useState<string>("");
 
-  const [definition, setDefinition] = useState<string>("");
+  const socket = useSocket();
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values.definition);
-    setDefinition(values.definition);
-  };
+  useEffect(() => {
+    const randomNumber = Math.floor(Math.random() * randomNames.length);
+    setRandomUsername(randomNames[randomNumber]);
+  }, []);
 
   return (
     <Row>
       <Col span={8} style={{ backgroundColor: "aliceblue" }}>
-        <ChatCompo socket={socket} roomId={"23"} username={"Bob"} />
+        <ChatCompo roomId={"23"} username={randomUsername} socket={socket} />
       </Col>
       <Col span={16}>
-        <div>
-          <div className={styles.main_div}>
-            <div>Mot : bonjour</div>
-            <Form onFinish={onFinish}>
-              <Form.Item<FieldType>
-                label="Inventez une définition"
-                name="definition"
-                rules={[
-                  { required: true, message: "Veuillez écrire une définition" },
-                ]}
-              >
-                <TextArea rows={4} className={styles.definitionText} />
-              </Form.Item>
-              <Form.Item className={styles.formItem}>
-                <Button type="primary" htmlType="submit">
-                  Valider
-                </Button>
-              </Form.Item>
-            </Form>
-            {definition && (
-              <div>
-                <div>Votre définition :</div>
-                <div className={styles.definitionResult}>{definition}</div>
-              </div>
-            )}
-          </div>
-        </div>
+        <GameCompo socket={socket} />
       </Col>
     </Row>
   );

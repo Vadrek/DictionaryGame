@@ -9,7 +9,7 @@ import {
 } from "socket-controllers";
 import { Socket } from "socket.io";
 
-import { EMPTY_SQUARE, initBoard } from "../gameLogic/board";
+import { EMPTY_SQUARE, initBoard } from "../canvasGameLogic/board";
 import {
   BOARD_NB_COLS,
   BOARD_NB_ROWS,
@@ -17,8 +17,8 @@ import {
   PIXEL_BY_SQUARE,
   PLAYER_SIZE,
   PLAYER_SPEED,
-} from "../gameLogic/constants";
-import { Square } from "../gameLogic/type";
+} from "../canvasGameLogic/constants";
+import { Square } from "../canvasGameLogic/type";
 import { Player } from "./type";
 
 function getRandomColor() {
@@ -31,7 +31,7 @@ function getRandomColor() {
 }
 
 @SocketController()
-export class MainController {
+export class CanvasController {
   public players: Record<string, Player>;
   public board: Square[][];
   public pixel: number;
@@ -78,12 +78,6 @@ export class MainController {
   @OnDisconnect()
   public onDisconnection(@ConnectedSocket() socket: Socket) {
     delete this.players[socket.id];
-    console.log(
-      "Socket disconnected: ",
-      socket.id,
-      "length",
-      Object.keys(this.players).length
-    );
   }
 
   @OnMessage("move_player")
@@ -141,7 +135,6 @@ export class MainController {
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: any
   ) {
-    console.log("answerChat");
     // socket.emit("receive_msg", data);
     io.emit("receive_msg", data); // broadcast to all
   }

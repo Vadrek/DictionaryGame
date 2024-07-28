@@ -9,7 +9,7 @@ interface IMsgDataTypes {
   time: String;
 }
 
-export const ChatCompo = ({ socket, username, roomId }: any) => {
+export const ChatCompo = ({ username, roomId, socket }: any) => {
   const [currentMsg, setCurrentMsg] = useState("");
   const [chat, setChat] = useState<IMsgDataTypes[]>([]);
 
@@ -25,15 +25,21 @@ export const ChatCompo = ({ socket, username, roomId }: any) => {
           ":" +
           new Date(Date.now()).getMinutes(),
       };
-      await socket.emit("send_msg", msgData);
+      socket.emit("send_msg", msgData);
       setCurrentMsg("");
     }
   };
 
+  const onReceiveMsg = (data: IMsgDataTypes) => {
+    setChat((pre) => [...pre, data]);
+  };
+
   useEffect(() => {
-    socket.on("receive_msg", (data: IMsgDataTypes) => {
-      setChat((pre) => [...pre, data]);
-    });
+    if (socket == null) return;
+    socket.on("receive_msg", onReceiveMsg);
+    return () => {
+      socket.off("receive_msg", onReceiveMsg);
+    };
   }, [socket]);
 
   return (

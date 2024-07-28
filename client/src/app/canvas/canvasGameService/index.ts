@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 import { Player, Square, BoardUpdate } from "./type";
 
-class GameService {
+class CanvasGameService {
   public onInitBoard(socket: Socket, listener: (board: Square[][]) => void) {
     socket.on("init_board", (board: Square[][]) => {
       listener(board);
@@ -28,4 +28,4 @@ class GameService {
   }
 }
 
-export const gameService = new GameService();
+export const canvasGameService = new CanvasGameService();

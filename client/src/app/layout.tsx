@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Button } from "antd";
 import "./globals.css";
-import { ProvideSocketIoClient } from "@/providers/SocketIoProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,13 +24,8 @@ export default function RootLayout({
         <div className="topButtons">
           <Button href="/">Home</Button>
           <Button href="/canvas">Canvas</Button>
-          <Button href="/chat">Chat</Button>
-          <Button href="/chatLogin">Chat Login</Button>
         </div>
-        <ProvideSocketIoClient>
-          <main>{children}</main>
-        </ProvideSocketIoClient>
-        {/* <main>{children}</main> */}
+        <main>{children}</main>
       </body>
     </html>
   );

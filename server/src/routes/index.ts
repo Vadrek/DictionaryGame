@@ -16,7 +16,6 @@ router.get("/word/:word", async function (req, res) {
 
 router.get("/nums/:num", async function (req, res, next) {
   const num = req.params.num;
-  console.log("YO num", num);
   const word = await getWordFromPage(num);
   res.json({ num, word });
 });
