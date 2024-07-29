@@ -1,22 +1,19 @@
-import { useSocket } from "@/socket/hook";
+import { useState } from "react";
 import { Button, Form, FormProps } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import styles from "./GameCompo.module.css";
-import { useState } from "react";
 
 type FieldType = {
   definition: string;
 };
 
-export const Step1 = ({ goToNextStep }: any) => {
-  const socket = useSocket();
-
+export const Step1 = ({ socket, word }: any) => {
   const [definition, setDefinition] = useState<string>("");
-  const [word, setWord] = useState<string>("");
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     setDefinition(values.definition);
+    socket.emit("write_definition", { definition: values.definition });
   };
 
   return (
@@ -40,7 +37,7 @@ export const Step1 = ({ goToNextStep }: any) => {
       </Form>
       {definition && (
         <div>
-          <div>Votre définition :</div>
+          <div>Votre définition a été envoyée :</div>
           <div className={styles.definitionResult}>{definition}</div>
         </div>
       )}

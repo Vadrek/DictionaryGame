@@ -2,7 +2,6 @@
 
 import "reflect-metadata";
 import { app } from "./app";
-const debug = require("debug")("socketio-server:server");
 import http from "http";
 import { socketServer } from "./socket";
 import { config as loadEnv } from "dotenv";
@@ -83,7 +82,7 @@ function onError(error) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  debug("Listening on " + bind);
+  console.log("Listening on " + bind);
 
   console.log("Server Running on Port: ", port);
 }

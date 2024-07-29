@@ -24,3 +24,19 @@
   width: 600px;
   white-space: pre-wrap;
 }
+
+.definitionToChooseContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.definitionToChoose {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  white-space: pre-wrap;
+  cursor: pointer;
+  background-color: lemonchiffon;
+}

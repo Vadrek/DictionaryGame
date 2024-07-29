@@ -3,10 +3,8 @@ import React, { useEffect, useState } from "react";
 import style from "./ChatCompo.module.css";
 
 interface IMsgDataTypes {
-  roomId: String | number;
-  user: String;
-  msg: String;
-  time: String;
+  user: string;
+  msg: string;
 }
 
 export const ChatCompo = ({ username, roomId, socket }: any) => {
@@ -17,13 +15,8 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
     e.preventDefault();
     if (currentMsg !== "") {
       const msgData: IMsgDataTypes = {
-        roomId,
         user: username,
         msg: currentMsg,
-        time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          new Date(Date.now()).getMinutes(),
       };
       socket.emit("send_msg", msgData);
       setCurrentMsg("");
@@ -51,7 +44,7 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
           </p>
         </div>
         <div>
-          {chat.map(({ roomId, user, msg, time }, key) => (
+          {chat.map(({ user, msg }, key) => (
             <div
               key={key}
               className={

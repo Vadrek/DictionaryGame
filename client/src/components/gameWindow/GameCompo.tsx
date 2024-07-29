@@ -1,70 +1,65 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Form, FormProps } from "antd";
-import TextArea from "antd/es/input/TextArea";
+import { Button } from "antd";
 
 import styles from "./GameCompo.module.css";
 import { Step0 } from "./Step0";
 import { Step1 } from "./Step1";
-
-type FieldType = {
-  definition: string;
-};
+import { Step2 } from "./Step2";
+import { Step3 } from "./Step3";
+import { Player } from "./game.types";
 
 export const GameCompo = ({ socket }: any) => {
   const [step, setStep] = useState<number>(0);
-  const [definition, setDefinition] = useState<string>("");
+  const [definitions, setDefinitions] = useState<string>("");
   const [word, setWord] = useState<string>("");
+  const [players, setPlayers] = useState<Player[]>([]);
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    setDefinition(values.definition);
-  };
-
-  const onGameStarted = ({ word }: any) => {
-    setWord(word);
+  const updateState = ({
+    step: currentStep,
+    word: currentWord,
+    definitions: currentDefinitions,
+    players: currentPlayers,
+  }: any) => {
+    setStep(currentStep);
+    setWord(currentWord);
+    setDefinitions(currentDefinitions);
+    setPlayers(currentPlayers);
   };
 
   useEffect(() => {
     if (socket) {
-      socket.on("game_started", onGameStarted);
+      socket.on("connection_accepted", updateState);
+      socket.on("game_restarted", updateState);
+      socket.on("game_started", updateState);
+      socket.on("definitions_acquired", updateState);
+      socket.on("definitions_chosen", updateState);
+
       return () => {
-        socket.off("game_started", onGameStarted);
+        socket.off("connection_accepted", updateState);
+        socket.off("game_restarted", updateState);
+        socket.off("game_started", updateState);
+        socket.off("definitions_acquired", updateState);
+        socket.off("definitions_chosen", updateState);
       };
     }
   }, [socket]);
 
-  const goToNextStep = () => {
-    setStep(step + 1);
-  };
-
   return (
     <div className={styles.main_div}>
-      {step === 0 && <Step0 goToNextStep={goToNextStep} />}
-      {step === 1 && <Step1 goToNextStep={goToNextStep} />}
-      {/* <Button onClick={() => socket.emit("start_game")}>Start Game</Button>
-      <div>{`Mot : ${word}`}</div>
-      <Form onFinish={onFinish}>
-        <Form.Item<FieldType>
-          label="Inventez une définition"
-          name="definition"
-          rules={[
-            { required: true, message: "Veuillez écrire une définition" },
-          ]}
+      {step > 0 && (
+        <Button
+          onClick={() => {
+            socket.emit("restart_game");
+          }}
         >
-          <TextArea rows={4} className={styles.definitionText} />
-        </Form.Item>
-        <Form.Item className={styles.formItem}>
-          <Button type="primary" htmlType="submit">
-            Valider
-          </Button>
-        </Form.Item>
-      </Form>
-      {definition && (
-        <div>
-          <div>Votre définition :</div>
-          <div className={styles.definitionResult}>{definition}</div>
-        </div>
-      )} */}
+          Restart
+        </Button>
+      )}
+      {step === 0 && <Step0 socket={socket} />}
+      {step === 1 && <Step1 socket={socket} word={word} />}
+      {step === 2 && <Step2 socket={socket} definitions={definitions} />}
+      {step === 3 && <Step3 players={players} />}
     </div>
   );
 };

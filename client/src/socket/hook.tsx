@@ -4,7 +4,6 @@ import io from "socket.io-client";
 export function useSocket() {
   const [socket, setSocket] = useState<any>(null);
   const server_url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
-  console.log("server_url", server_url);
 
   useEffect(() => {
     const socketIo = io(server_url);

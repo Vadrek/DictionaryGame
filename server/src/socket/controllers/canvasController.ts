@@ -128,14 +128,4 @@ export class CanvasController {
       time: new Date().toISOString(),
     };
   }
-
-  @OnMessage("send_msg")
-  public answerChat(
-    @SocketIO() io: any,
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any
-  ) {
-    // socket.emit("receive_msg", data);
-    io.emit("receive_msg", data); // broadcast to all
-  }
 }
