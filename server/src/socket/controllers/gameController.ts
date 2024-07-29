@@ -37,7 +37,7 @@ export class GameController {
   public onConnection(@ConnectedSocket() socket: Socket) {
     this.players[socket.id] = {};
     console.log("hello connect");
-    // socket.emit("init_board", this.board);
+    socket.emit("connection_accepted", { username: getRandomUsername() });
   }
 
   @OnDisconnect()
@@ -49,4 +49,24 @@ export class GameController {
   public startGame(@SocketIO() io: any) {
     io.emit("game_started", { word: getRandomWord() });
   }
+}
+
+const randomNames = [
+  "Alice",
+  "Bob",
+  "Charlie",
+  "David",
+  "Eve",
+  "Frank",
+  "Grace",
+  "Heidi",
+  "Ivan",
+  "Judy",
+  "Mallory",
+  "Oscar",
+];
+
+function getRandomUsername() {
+  const randomNumber = Math.floor(Math.random() * randomNames.length);
+  return randomNames[randomNumber];
 }

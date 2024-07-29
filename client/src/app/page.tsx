@@ -6,35 +6,27 @@ import { ChatCompo } from "@/components/chatWindow/ChatCompo";
 import { GameCompo } from "@/components/gameWindow/GameCompo";
 import { useSocket } from "@/socket/hook";
 
-const randomNames = [
-  "Alice",
-  "Bob",
-  "Charlie",
-  "David",
-  "Eve",
-  "Frank",
-  "Grace",
-  "Heidi",
-  "Ivan",
-  "Judy",
-  "Mallory",
-  "Oscar",
-];
-
 export default function Home() {
-  const [randomUsername, setRandomUsername] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
 
   const socket = useSocket();
 
-  useEffect(() => {
-    const randomNumber = Math.floor(Math.random() * randomNames.length);
-    setRandomUsername(randomNames[randomNumber]);
-  }, []);
+  const onConnectionAccepted = ({ username }: any) => {
+    setUsername(username);
+  };
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("connection_accepted", onConnectionAccepted);
+      return () => {
+        socket.off("connection_accepted", onConnectionAccepted);
+      };
+    }
+  }, [socket]);
   return (
     <Row>
       <Col span={8} style={{ backgroundColor: "aliceblue" }}>
-        <ChatCompo roomId={"23"} username={randomUsername} socket={socket} />
+        <ChatCompo roomId={"23"} username={username} socket={socket} />
       </Col>
       <Col span={16}>
         <GameCompo socket={socket} />
