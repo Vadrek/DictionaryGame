@@ -13,7 +13,7 @@ export const Step1 = ({ socket, word }: any) => {
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     setDefinition(values.definition);
-    socket.emit("write_definition", { definition: values.definition });
+    socket.emit("write_definition", { definitionContent: values.definition });
   };
 
   return (

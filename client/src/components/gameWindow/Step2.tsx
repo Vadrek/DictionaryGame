@@ -1,28 +1,38 @@
 import { useState } from "react";
 import styles from "./GameCompo.module.css";
+import { Definition, Definitions, SocketType } from "./game.types";
 
-export const Step2 = ({ socket, definitions }: any) => {
-  const [definitionVoted, setDefinitionVoted] = useState<number | null>(null);
+export const Step2 = ({
+  socket,
+  definitions,
+}: {
+  socket: SocketType;
+  definitions: Definitions;
+}) => {
+  const definitionList = Object.values(definitions).sort(
+    (a: Definition, b: Definition) => (a.content > b.content ? 1 : -1)
+  );
+  const [definitionVoted, setDefinitionVoted] = useState<string | null>(null);
 
-  const onClick = (index: number, definition: string) => {
+  const onClick = (definition: Definition) => {
     socket.emit("choose_definition", { definition });
-    setDefinitionVoted(index);
+    setDefinitionVoted(definition.id);
   };
 
   return (
     <div className={styles.definitionToChooseContainer}>
       <div>Trouvez la bonne définition :</div>
-      {definitions.map((definition: string, index: number) => (
+      {definitionList.map((definition: Definition) => (
         <div
-          key={index}
+          key={definition.id}
           className={
-            definitionVoted === index
+            definitionVoted === definition.id
               ? styles.definitionToChosen
               : styles.definitionToChoose
           }
-          onClick={() => onClick(index, definition)}
+          onClick={() => onClick(definition)}
         >
-          {definition}
+          {definition.content}
         </div>
       ))}
     </div>

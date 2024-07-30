@@ -19,7 +19,7 @@ import {
   PLAYER_SPEED,
 } from "../canvasGameLogic/constants";
 import { Square } from "../canvasGameLogic/type";
-import { Player } from "./type";
+import { PlayerCanvas } from "./type";
 
 function getRandomColor() {
   var letters = "0123456789ABCDEF";
@@ -32,7 +32,7 @@ function getRandomColor() {
 
 @SocketController()
 export class CanvasController {
-  public players: Record<string, Player>;
+  public players: Record<string, PlayerCanvas>;
   public board: Square[][];
   public pixel: number;
   public xMax: number;
@@ -90,7 +90,7 @@ export class CanvasController {
     this.colorPlayerSquare(this.players[socket.id]);
   }
 
-  public moveOnePlayer(direction: string, player: Player) {
+  public moveOnePlayer(direction: string, player: PlayerCanvas) {
     if (direction == "UP") player.y -= player.speed;
     if (direction == "DOWN") player.y += player.speed;
     if (direction == "LEFT") player.x -= player.speed;
@@ -120,7 +120,7 @@ export class CanvasController {
     }
   }
 
-  public colorPlayerSquare(player: Player) {
+  public colorPlayerSquare(player: PlayerCanvas) {
     const playerRow = Math.floor(player.y / PIXEL_BY_SQUARE);
     const playerCol = Math.floor(player.x / PIXEL_BY_SQUARE);
     this.board[playerRow][playerCol] = {

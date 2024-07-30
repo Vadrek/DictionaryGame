@@ -23,7 +23,7 @@ export default function Home() {
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    if (values.username) {
+    if (socket && values.username) {
       setUsername(values.username);
       socket.emit("change_username", { username: values.username });
       sessionStorage.setItem("username", values.username);
@@ -35,6 +35,7 @@ export default function Home() {
   };
 
   const onStoreSession = ({ sessionID, userID, username }: any) => {
+    if (!socket) return;
     // attach the session ID to the next reconnection attempts
     socket.auth = { sessionID, username };
     // store it in the localStorage
