@@ -11,7 +11,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { sessionStore } from "../sessionStore";
 import { Definition, Definitions, Player, Results, SocketType } from "./type";
-import { getRandomUsername, getRandomWord } from "../utils";
+import { getRandomUsername } from "../utils";
+import { getDefinitionFromNum, getRandomDictNumber } from "../../routes";
 
 @SocketController()
 export class GameController {
@@ -106,7 +107,6 @@ export class GameController {
       step: this.step,
       word: this.word,
       definitions: this.definitions,
-      players: this.players,
       results: this.results,
     });
 
@@ -147,10 +147,16 @@ export class GameController {
   }
 
   @OnMessage("start_game")
-  public startGame(@SocketIO() io: any) {
+  public async startGame(@SocketIO() io: any) {
     this.step = 1;
-    this.word = getRandomWord();
-    const realDefinition = "the real definition";
+    // this.word = getRandomWord();
+    // const realDefinition = "the real definition";
+    const num = getRandomDictNumber();
+    // const num = 80000;
+    const { word, definition } = await getDefinitionFromNum(num);
+    console.log("hey word, definition", word, definition, num);
+    this.word = word;
+    const realDefinition = definition;
     const realDefinitionId = uuidv4();
     this.realDefinitionId = realDefinitionId;
     this.definitions = {
@@ -226,7 +232,6 @@ export class GameController {
 
       io.emit("definitions_chosen", {
         step: this.step,
-        players: this.players,
         results: this.results,
       });
     }

@@ -1,8 +1,10 @@
 import express from "express";
 import axios from "axios";
-import { load as cheerioLoad } from "cheerio";
+import { CheerioAPI, load as cheerioLoad } from "cheerio";
 
 const router = express.Router();
+
+const dictionaryUrl = "https://www.larousse.fr/dictionnaires/francais";
 
 router.get("/", function (req, res) {
   res.send("Hello Boy!!");
@@ -10,7 +12,8 @@ router.get("/", function (req, res) {
 
 router.get("/word/:word", async function (req, res) {
   const word = req.params.word;
-  const definition = await getDefinitionFromPage(word);
+  const wordUrl = `${dictionaryUrl}/${word}`;
+  const definition = await getDefinitionFromPage(wordUrl);
   res.send({ word, definition });
 });
 
@@ -20,11 +23,27 @@ router.get("/nums/:num", async function (req, res, next) {
   res.json({ num, word });
 });
 
-const getDefinitionFromPage = async (word: string) => {
-  const { data } = await axios.get(
-    `https://www.larousse.fr/dictionnaires/francais/${word}`
-  );
-  const $ = cheerioLoad(data);
+const getPage = async (url: string) => {
+  const { data } = await axios.get(url);
+  return cheerioLoad(data);
+};
+
+const getDefinitionFromPage = async (pageUrl: string) => {
+  const $ = await getPage(pageUrl);
+  return extractDefinition($);
+};
+
+export const getWordFromPage = async (num: number) => {
+  const $ = await getPage(`${dictionaryUrl}/someword/${num}`);
+  return extractWord($);
+};
+
+export const getDefinitionFromNum = async (num: number) => {
+  const $ = await getPage(`${dictionaryUrl}/someword/${num}`);
+  return { word: extractWord($), definition: extractDefinition($) };
+};
+
+const extractDefinition = ($: CheerioAPI) => {
   const definition = $(".DivisionDefinition:first")
     .first()
     .contents()
@@ -35,11 +54,7 @@ const getDefinitionFromPage = async (word: string) => {
   return definition.trim();
 };
 
-const getWordFromPage = async (num: number) => {
-  const { data } = await axios.get(
-    `https://www.larousse.fr/dictionnaires/francais/someword/${num}`
-  );
-  const $ = cheerioLoad(data);
+export const extractWord = ($: CheerioAPI) => {
   const words = $("h2.AdresseDefinition")
     .first()
     .contents()
@@ -47,6 +62,10 @@ const getWordFromPage = async (num: number) => {
     .text();
   const word = words.split(",")[0];
   return word.trim();
+};
+
+export const getRandomDictNumber = () => {
+  return Math.floor(Math.random() * 83296);
 };
 
 export { router };
