@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { sessionStore } from "../sessionStore";
 import { Definition, Definitions, Player, Results, SocketType } from "./type";
-import { getRandomUsername } from "../utils";
+import { getRandomUsername, getRandomWord } from "../utils";
 import { getDefinitionFromNum, getRandomDictNumber } from "../../routes";
 
 @SocketController()
@@ -63,6 +63,7 @@ export class GameController {
       userID: socket.userID,
       username,
     });
+    console.log("connect this.players", this.players);
   }
 
   @OnDisconnect()
@@ -76,6 +77,7 @@ export class GameController {
     const matchingSockets = await io.in(socket.userID).allSockets();
     const isDisconnected = matchingSockets.size === 0;
     if (isDisconnected) {
+      delete this.players[socket.userID];
       // notify other users
       socket.broadcast.emit("user disconnected", socket.userID);
       // update the connection status of the session
@@ -107,10 +109,11 @@ export class GameController {
       step: this.step,
       word: this.word,
       definitions: this.definitions,
+      players: this.players,
       results: this.results,
     });
 
-    io.emit("update_usernames", {
+    socket.broadcast.emit("update_usernames", {
       allUsernames,
     });
 
@@ -151,10 +154,10 @@ export class GameController {
     this.step = 1;
     // this.word = getRandomWord();
     // const realDefinition = "the real definition";
-    const num = getRandomDictNumber();
     // const num = 80000;
+    const num = getRandomDictNumber();
     const { word, definition } = await getDefinitionFromNum(num);
-    console.log("hey word, definition", word, definition, num);
+    // console.log("hey word, definition", word, definition, num);
     this.word = word;
     const realDefinition = definition;
     const realDefinitionId = uuidv4();
@@ -186,7 +189,7 @@ export class GameController {
   ) {
     const definitionId = uuidv4();
     this.players[socket.userID].definitionIdWritten = definitionId;
-    this.definitions[definitionId] = {
+    this.definitions[socket.userID] = {
       id: definitionId,
       content: body.definitionContent,
     };

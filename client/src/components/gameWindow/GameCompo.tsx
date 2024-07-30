@@ -19,13 +19,14 @@ export const GameCompo = ({ socket }: any) => {
     step: currentStep,
     word: currentWord,
     definitions: currentDefinitions,
-
+    players: currentPlayers,
     results: currentResults,
   }: any) => {
     setStep(currentStep);
     setWord(currentWord);
     setDefinitions(currentDefinitions);
     setResults(currentResults);
+    console.log("currentPlayers", currentPlayers, "definitions", definitions);
   };
 
   useEffect(() => {
