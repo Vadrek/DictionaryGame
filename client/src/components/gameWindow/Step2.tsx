@@ -1,8 +1,12 @@
+import { useState } from "react";
 import styles from "./GameCompo.module.css";
 
 export const Step2 = ({ socket, definitions }: any) => {
-  const onClick = (definition: string) => {
+  const [definitionVoted, setDefinitionVoted] = useState<number | null>(null);
+
+  const onClick = (index: number, definition: string) => {
     socket.emit("choose_definition", { definition });
+    setDefinitionVoted(index);
   };
 
   return (
@@ -11,8 +15,12 @@ export const Step2 = ({ socket, definitions }: any) => {
       {definitions.map((definition: string, index: number) => (
         <div
           key={index}
-          className={styles.definitionToChoose}
-          onClick={() => onClick(definition)}
+          className={
+            definitionVoted === index
+              ? styles.definitionToChosen
+              : styles.definitionToChoose
+          }
+          onClick={() => onClick(index, definition)}
         >
           {definition}
         </div>

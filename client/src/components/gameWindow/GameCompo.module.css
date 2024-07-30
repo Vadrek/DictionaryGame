@@ -40,3 +40,7 @@
   cursor: pointer;
   background-color: lemonchiffon;
 }
+
+.definitionToChosen {
+  background-color: green;
+}

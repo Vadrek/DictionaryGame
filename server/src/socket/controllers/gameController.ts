@@ -8,6 +8,8 @@ import {
   SocketIO,
 } from "socket-controllers";
 import { Socket } from "socket.io";
+import { sessionStore } from "../sessionStore";
+import { SocketType } from "./type";
 
 function getRandomWord() {
   const words = [
@@ -47,7 +49,8 @@ function getRandomUsername() {
 }
 
 type Player = {
-  id: string;
+  sessionID: string;
+  userId: string;
   username: string;
   definitionWritten: string;
   definitionChosen: string;
@@ -72,10 +75,11 @@ export class GameController {
   }
 
   @OnConnect()
-  public onConnection(@ConnectedSocket() socket: Socket) {
-    const username = getRandomUsername();
+  public onConnection(@ConnectedSocket() socket: SocketType) {
+    const username = socket.username || getRandomUsername();
     this.players[socket.id] = {
-      id: socket.id,
+      sessionID: "",
+      userId: socket.id,
       username,
       definitionWritten: "",
       definitionChosen: "",
@@ -91,26 +95,36 @@ export class GameController {
       word: this.word,
       definitions: this.definitions,
     });
+
+    socket.emit("store_session", {
+      sessionID: socket.sessionID,
+      userID: socket.userID,
+      username,
+    });
   }
 
   @OnDisconnect()
-  public onDisconnection(@ConnectedSocket() socket: Socket) {
-    delete this.players[socket.id];
-  }
-
-  @OnMessage("keep_old_username")
-  public keepOldUsername(
-    @ConnectedSocket() socket: Socket,
-    @SocketIO() io: any,
-    @MessageBody() body: { username: string }
+  public async onDisconnection(
+    @ConnectedSocket()
+    socket: SocketType,
+    @SocketIO() io: any
   ) {
-    this.players[socket.id].username = body.username;
-    const allUsernames = Object.values(this.players).map(
-      (player) => player.username
-    );
-    io.emit("update_usernames", {
-      allUsernames,
-    });
+    const username = this.players[socket.id].username;
+    delete this.players[socket.id];
+
+    const matchingSockets = await io.in(socket.userID).allSockets();
+    const isDisconnected = matchingSockets.size === 0;
+    if (isDisconnected) {
+      // notify other users
+      socket.broadcast.emit("user disconnected", socket.userID);
+      // update the connection status of the session
+      console.log("saveSession", socket.sessionID);
+      sessionStore.saveSession(socket.sessionID, {
+        userID: socket.userID,
+        username: username,
+        connected: false,
+      });
+    }
   }
 
   @OnMessage("change_username")

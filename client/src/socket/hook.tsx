@@ -7,6 +7,7 @@ export function useSocket() {
 
   useEffect(() => {
     const socketIo = io(server_url);
+
     setSocket(socketIo);
 
     return () => {

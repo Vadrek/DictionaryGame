@@ -17,11 +17,6 @@ export default function Home() {
   const [form] = Form.useForm();
 
   const onConnectionAccepted = ({ username, allUsernames }: any) => {
-    const sessionUsername = sessionStorage.getItem("username");
-    if (sessionUsername) {
-      socket.emit("keep_old_username", { username: sessionUsername });
-    }
-    username = sessionUsername || username;
     setUsername(username);
     form.setFieldsValue({ username: username });
     setAllUsernames(allUsernames);
@@ -39,14 +34,30 @@ export default function Home() {
     setAllUsernames(allUsernames);
   };
 
+  const onStoreSession = ({ sessionID, userID, username }: any) => {
+    // attach the session ID to the next reconnection attempts
+    socket.auth = { sessionID, username };
+    // store it in the localStorage
+    sessionStorage.setItem("sessionID", sessionID);
+    sessionStorage.setItem("username", username);
+    // save the ID of the user
+    socket.userID = userID;
+    socket.username = username;
+  };
+
   useEffect(() => {
     if (socket) {
+      const sessionID = sessionStorage.getItem("sessionID");
+      const username = sessionStorage.getItem("username");
+      socket.auth = { sessionID, username };
       socket.on("connection_accepted", onConnectionAccepted);
       socket.on("update_usernames", onUpdateUsernames);
+      socket.on("store_session", onStoreSession);
 
       return () => {
         socket.off("connection_accepted", onConnectionAccepted);
         socket.off("update_usernames", onUpdateUsernames);
+        socket.off("store_session", onStoreSession);
       };
     }
   }, [socket]);
