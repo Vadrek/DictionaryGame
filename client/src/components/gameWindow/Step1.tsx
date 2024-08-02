@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Form, FormProps } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
-import styles from "./GameCompo.module.css";
+import styles from "./Step1.module.scss";
 
 type FieldType = {
   definition: string;
@@ -17,7 +17,7 @@ export const Step1 = ({ socket, word }: any) => {
   };
 
   return (
-    <>
+    <div className={styles.container}>
       <div>{`Mot : ${word}`}</div>
       <Form onFinish={onFinish}>
         <Form.Item<FieldType>
@@ -41,6 +41,6 @@ export const Step1 = ({ socket, word }: any) => {
           <div className={styles.definitionResult}>{definition}</div>
         </div>
       )}
-    </>
+    </div>
   );
 };

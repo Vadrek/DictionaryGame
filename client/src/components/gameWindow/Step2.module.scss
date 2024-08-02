@@ -1,0 +1,30 @@
+.definitionToChooseContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.definitionItem {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  white-space: pre-wrap;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.definitionToChoose {
+  background-color: lemonchiffon;
+  &:hover {
+    background-color: rgb(215, 215, 164);
+  }
+}
+
+.definitionChosen {
+  background-color: rgb(176, 176, 244);
+  &:hover {
+    background-color: rgb(195, 195, 242);
+  }
+}

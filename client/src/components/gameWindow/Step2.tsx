@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Definition, Definitions, SocketType } from "./game.types";
 
-import styles from "./GameCompo.module.css";
+import styles from "./Step2.module.scss";
+import classNames from "classnames";
 
 export const Step2 = ({
   socket,
@@ -26,11 +27,19 @@ export const Step2 = ({
       {definitionList.map((definition: Definition) => (
         <div
           key={definition.id}
-          className={
-            definitionVoted === definition.id
-              ? styles.definitionToChosen
-              : styles.definitionToChoose
-          }
+          className={classNames(
+            styles.definitionItem,
+            // styles.definitionToChoose,
+            {
+              [styles.definitionToChoose]: definition.id !== definitionVoted,
+              [styles.definitionChosen]: definition.id === definitionVoted,
+            }
+          )}
+          // className={
+          //   definitionVoted === definition.id
+          //     ? styles.definitionToChosen
+          //     : styles.definitionToChoose
+          // }
           onClick={() => onClick(definition)}
         >
           {definition.content}

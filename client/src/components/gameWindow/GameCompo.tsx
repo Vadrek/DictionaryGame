@@ -8,7 +8,7 @@ import { Step2 } from "./Step2";
 import { Step3 } from "./Step3";
 import { Definitions, Results } from "./game.types";
 
-import styles from "./GameCompo.module.css";
+import styles from "./GameCompo.module.scss";
 
 export const GameCompo = ({ socket }: any) => {
   const [step, setStep] = useState<number>(0);
@@ -49,7 +49,7 @@ export const GameCompo = ({ socket }: any) => {
   }, [socket]);
 
   return (
-    <div className={styles.main_div}>
+    <div className={styles.mainDiv}>
       {step > 0 && (
         <Button
           onClick={() => {

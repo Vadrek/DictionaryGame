@@ -152,13 +152,14 @@ export class GameController {
   @OnMessage("start_game")
   public async startGame(@SocketIO() io: any) {
     this.step = 1;
-    this.word = getRandomWord();
-    const realDefinition = "the real definition";
+    // this.word = getRandomWord();
+    // const realDefinition = "the real definition";
+
     // const num = 80000;
-    // const num = getRandomDictNumber();
-    // const { word, definition } = await getDefinitionFromNum(num);
-    // this.word = word;
-    // const realDefinition = definition;
+    const num = getRandomDictNumber();
+    const { word, definition } = await getDefinitionFromNum(num);
+    this.word = word;
+    const realDefinition = definition;
     const realDefinitionId = uuidv4();
     this.realDefinitionId = realDefinitionId;
     this.definitions = {
@@ -234,7 +235,6 @@ export class GameController {
     if (this.votes === Object.keys(this.players).length) {
       this.step = 3;
 
-      console.log("this.results", JSON.stringify(this.results, null, 2));
       io.emit("definitions_chosen", {
         step: this.step,
         results: this.results,

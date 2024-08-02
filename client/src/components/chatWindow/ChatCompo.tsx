@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import style from "./ChatCompo.module.css";
+import style from "./ChatCompo.module.scss";
 
 interface IMsgDataTypes {
   user: string;
