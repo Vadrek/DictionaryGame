@@ -1,6 +1,7 @@
 import { useState } from "react";
-import styles from "./GameCompo.module.css";
 import { Definition, Definitions, SocketType } from "./game.types";
+
+import styles from "./GameCompo.module.css";
 
 export const Step2 = ({
   socket,

@@ -64,6 +64,7 @@ export class GameController {
       username,
     });
     console.log("connect this.players", this.players);
+    console.log("connect this.definitions", this.definitions);
   }
 
   @OnDisconnect()
@@ -135,7 +136,6 @@ export class GameController {
     this.definitions = {};
     this.results = {};
     this.realDefinitionId = "";
-    this.players = {};
 
     Object.values(this.players).forEach((player) => {
       player.definitionIdWritten = "";
@@ -152,14 +152,13 @@ export class GameController {
   @OnMessage("start_game")
   public async startGame(@SocketIO() io: any) {
     this.step = 1;
-    // this.word = getRandomWord();
-    // const realDefinition = "the real definition";
+    this.word = getRandomWord();
+    const realDefinition = "the real definition";
     // const num = 80000;
-    const num = getRandomDictNumber();
-    const { word, definition } = await getDefinitionFromNum(num);
-    // console.log("hey word, definition", word, definition, num);
-    this.word = word;
-    const realDefinition = definition;
+    // const num = getRandomDictNumber();
+    // const { word, definition } = await getDefinitionFromNum(num);
+    // this.word = word;
+    // const realDefinition = definition;
     const realDefinitionId = uuidv4();
     this.realDefinitionId = realDefinitionId;
     this.definitions = {
@@ -194,19 +193,21 @@ export class GameController {
       content: body.definitionContent,
     };
 
-    this.results[definitionId] = {
-      id: definitionId,
-      content: body.definitionContent,
-      author: this.players[socket.userID],
-      isReal: false,
-      voters: [],
-    };
-
     if (
       Object.keys(this.definitions).length ===
       Object.keys(this.players).length + 1
     ) {
       this.step = 2;
+      Object.keys(this.players).forEach((userId) => {
+        const definitionId = this.players[userId].definitionIdWritten;
+        this.results[definitionId] = {
+          id: definitionId,
+          content: this.definitions[userId].content,
+          author: this.players[userId],
+          isReal: false,
+          voters: [],
+        };
+      });
 
       io.emit("definitions_acquired", {
         step: this.step,
@@ -233,6 +234,7 @@ export class GameController {
     if (this.votes === Object.keys(this.players).length) {
       this.step = 3;
 
+      console.log("this.results", JSON.stringify(this.results, null, 2));
       io.emit("definitions_chosen", {
         step: this.step,
         results: this.results,

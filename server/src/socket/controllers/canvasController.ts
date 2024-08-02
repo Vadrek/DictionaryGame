@@ -55,12 +55,6 @@ export class CanvasController {
       color: getRandomColor(),
     };
     socket.emit("init_board", this.board);
-    console.log(
-      "New Socket connected: ",
-      socket.id,
-      "length",
-      Object.keys(this.players).length
-    );
 
     setInterval(() => {
       this.clearOldColors();

@@ -31,7 +31,6 @@ export default function Home() {
   };
 
   const onUpdateUsernames = ({ allUsernames }: any) => {
-    console.log("allUsernames", allUsernames);
     setAllUsernames(allUsernames);
   };
 

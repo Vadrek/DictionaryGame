@@ -42,3 +42,8 @@
   align-items: center;
   color: black;
 }
+
+.chatMessages {
+  max-height: 500px;
+  overflow-y: scroll;
+}

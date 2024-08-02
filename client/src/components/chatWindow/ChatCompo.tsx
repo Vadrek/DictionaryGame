@@ -25,6 +25,10 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
 
   const onReceiveMsg = (data: IMsgDataTypes) => {
     setChat((pre) => [...pre, data]);
+    const objDiv = document.getElementById("chatMessages");
+    if (objDiv) {
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -43,7 +47,7 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
             Name: <b>{username}</b> and Room Id: <b>{roomId}</b>
           </p>
         </div>
-        <div>
+        <div id="chatMessages" className={style.chatMessages}>
           {chat.map(({ user, msg }, key) => (
             <div
               key={key}

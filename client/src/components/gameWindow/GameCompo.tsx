@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 
-import styles from "./GameCompo.module.css";
 import { Step0 } from "./Step0";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
 import { Step3 } from "./Step3";
-import { Definitions, Player, Results } from "./game.types";
+import { Definitions, Results } from "./game.types";
+
+import styles from "./GameCompo.module.css";
 
 export const GameCompo = ({ socket }: any) => {
   const [step, setStep] = useState<number>(0);

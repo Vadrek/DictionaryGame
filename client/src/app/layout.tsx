@@ -21,10 +21,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="topButtons">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          <h1 style={{ justifyContent: "center" }}>Jeu du Dictionnaire 📚</h1>
+        </div>
+        {/* <div className="topButtons">
           <Button href="/">Home</Button>
           <Button href="/canvas">Canvas</Button>
-        </div>
+        </div> */}
         <main>{children}</main>
       </body>
     </html>
