@@ -36,9 +36,10 @@ export const Step1 = ({ socket, word }: any) => {
         </Form.Item>
       </Form>
       {definition && (
-        <div>
+        <div className={styles.definitionResultContainer}>
           <div>Votre définition a été envoyée :</div>
           <div className={styles.definitionResult}>{definition}</div>
+          <div>En attente des autres définitions...</div>
         </div>
       )}
     </div>

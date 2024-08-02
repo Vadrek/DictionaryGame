@@ -153,7 +153,8 @@ export class GameController {
   public async startGame(@SocketIO() io: any) {
     this.step = 1;
     // this.word = getRandomWord();
-    // const realDefinition = "the real definition";
+    // const realDefinition =
+    //   "the real definition the real definition the real definition the real definition the real definition the real definition the real definition the real definition";
 
     // const num = 80000;
     const num = getRandomDictNumber();

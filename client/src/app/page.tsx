@@ -73,7 +73,7 @@ export default function Home() {
           onFinish={onFinish}
         >
           <Form.Item<FieldType>
-            label="Username"
+            label="Pseudo"
             name="username"
             rules={[{ required: true, message: "your username" }]}
           >

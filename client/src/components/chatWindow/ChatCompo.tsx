@@ -42,11 +42,7 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
   return (
     <div className={style.chat_div}>
       <div className={style.chat_border}>
-        <div style={{ marginBottom: "1rem" }}>
-          <p>
-            Name: <b>{username}</b> and Room Id: <b>{roomId}</b>
-          </p>
-        </div>
+        <div style={{ marginBottom: "1rem" }}></div>
         <div id="chatMessages" className={style.chatMessages}>
           {chat.map(({ user, msg }, key) => (
             <div
@@ -75,10 +71,10 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
               className={style.chat_input}
               type="text"
               value={currentMsg}
-              placeholder="Type your message.."
+              placeholder="Votre message..."
               onChange={(e) => setCurrentMsg(e.target.value)}
             />
-            <button className={style.chat_button}>Send</button>
+            <button className={style.chat_button}>Envoyer</button>
           </form>
         </div>
       </div>

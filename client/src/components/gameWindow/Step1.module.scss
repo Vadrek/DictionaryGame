@@ -15,6 +15,12 @@
   justify-content: center;
 }
 
+.definitionResultContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .definitionResult {
   border: 1px solid black;
   display: flex;

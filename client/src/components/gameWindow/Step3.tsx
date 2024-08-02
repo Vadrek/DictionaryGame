@@ -2,9 +2,17 @@ import { Results } from "./game.types";
 
 import styles from "./Step3.module.scss";
 
+type DataSource = {
+  key: string;
+  author: string;
+  voters: string;
+  content: string;
+  isReal: boolean;
+};
+
 export const Step3 = ({ results }: { results: Results }) => {
   const dataSource = Object.values(results)
-    .reduce<any>((acc, { id, content, author, voters, isReal }) => {
+    .reduce<DataSource[]>((acc, { id, content, author, voters, isReal }) => {
       acc.push({
         key: id,
         content: content,
@@ -32,8 +40,7 @@ export const Step3 = ({ results }: { results: Results }) => {
           </tr>
         </thead>
         <tbody>
-          {dataSource.map((definition: any) => {
-            console.log("definition", definition.content, definition.isReal);
+          {dataSource.map((definition: DataSource) => {
             return (
               <tr
                 key={definition.key}
@@ -51,6 +58,10 @@ export const Step3 = ({ results }: { results: Results }) => {
           })}
         </tbody>
       </table>
+      <div className={styles.scoreRecap}>
+        <div>La bonne réponse a été trouvée par :</div>
+        {dataSource.filter((definition) => definition.isReal)[0].voters}
+      </div>
     </div>
   );
 };
