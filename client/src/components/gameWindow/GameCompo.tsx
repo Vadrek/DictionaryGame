@@ -6,15 +6,17 @@ import { Step0 } from "./Step0";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
 import { Step3 } from "./Step3";
-import { Definitions, Results } from "./game.types";
+import { Definitions, Results, SocketType } from "./game.types";
 
 import styles from "./GameCompo.module.scss";
 
-export const GameCompo = ({ socket }: any) => {
+export const GameCompo = ({ socket }: { socket: SocketType }) => {
   const [step, setStep] = useState<number>(0);
   const [definitions, setDefinitions] = useState<Definitions>({});
   const [word, setWord] = useState<string>("");
   const [results, setResults] = useState<Results>({});
+  const [definitionWritten, setDefinitionWritten] = useState<string>("");
+  const [definitionIdChosen, setDefinitionIdChosen] = useState<string>("");
 
   const updateState = ({
     step: currentStep,
@@ -22,11 +24,18 @@ export const GameCompo = ({ socket }: any) => {
     definitions: currentDefinitions,
     players: currentPlayers,
     results: currentResults,
+    myState,
   }: any) => {
+    if (myState) {
+      const { definitionIdChosen, userId } = myState;
+      setDefinitionWritten(currentDefinitions[userId]?.content);
+      setDefinitionIdChosen(definitionIdChosen);
+    }
     setStep(currentStep);
     setWord(currentWord);
     setDefinitions(currentDefinitions);
     setResults(currentResults);
+
     console.log("currentPlayers", currentPlayers, "definitions", definitions);
   };
 
@@ -60,9 +69,22 @@ export const GameCompo = ({ socket }: any) => {
         </Button>
       )}
       {step === 0 && <Step0 socket={socket} />}
-      {step === 1 && <Step1 socket={socket} word={word} />}
-      {step === 2 && <Step2 socket={socket} definitions={definitions} />}
-      {step === 3 && <Step3 results={results} />}
+      {step === 1 && (
+        <Step1
+          socket={socket}
+          word={word}
+          definitionWritten={definitionWritten}
+        />
+      )}
+      {step === 2 && (
+        <Step2
+          socket={socket}
+          word={word}
+          definitions={definitions}
+          definitionIdChosen={definitionIdChosen}
+        />
+      )}
+      {step === 3 && <Step3 word={word} results={results} />}
     </div>
   );
 };

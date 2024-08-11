@@ -20,6 +20,8 @@ export type SocketType = Socket & {
   userID: string;
   username: string;
   sessionID: string;
+  definitionIdWritten: string;
+  definitionIdChosen: string;
 };
 
 export type Definition = {
@@ -27,7 +29,7 @@ export type Definition = {
   content: string;
 };
 
-export type Definitions = Record<string, Definition>;
+export type Definitions = Record<string, Definition>; // key = userID
 
 export type Result = {
   id: string;

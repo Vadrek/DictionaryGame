@@ -10,7 +10,13 @@ type DataSource = {
   isReal: boolean;
 };
 
-export const Step3 = ({ results }: { results: Results }) => {
+export const Step3 = ({
+  word,
+  results,
+}: {
+  word: string;
+  results: Results;
+}) => {
   const dataSource = Object.values(results)
     .reduce<DataSource[]>((acc, { id, content, author, voters, isReal }) => {
       acc.push({
@@ -31,6 +37,7 @@ export const Step3 = ({ results }: { results: Results }) => {
 
   return (
     <div>
+      <div>{`Mot : ${word}`}</div>
       <table className={styles.table}>
         <thead>
           <tr>

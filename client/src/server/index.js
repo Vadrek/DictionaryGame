@@ -2,7 +2,7 @@ const { createServer } = require("http");
 const next = require("next");
 
 const dev = process.env.NODE_ENV !== "production";
-const port = 3000;
+const port = 3001;
 
 const app = next({ dev, customServer: true });
 const handle = app.getRequestHandler();

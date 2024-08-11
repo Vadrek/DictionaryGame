@@ -63,10 +63,6 @@ export class CanvasController {
         board: this.board,
       });
     }, 1000 / 60);
-
-    socket.on("custom_event", (data: any) => {
-      console.log("Data: ", data);
-    });
   }
 
   @OnDisconnect()

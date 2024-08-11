@@ -1,10 +1,12 @@
 import express from "express";
 import axios from "axios";
 import { CheerioAPI, load as cheerioLoad } from "cheerio";
+import { getRandomWord } from "../socket/utils";
 
 const router = express.Router();
 
 const dictionaryUrl = "https://www.larousse.fr/dictionnaires/francais";
+const MAX_WORDS = 83296;
 
 router.get("/", function (req, res) {
   res.send("Hello Boy!!");
@@ -38,9 +40,32 @@ export const getWordFromPage = async (num: number) => {
   return extractWord($);
 };
 
-export const getDefinitionFromNum = async (num: number) => {
+export const getDefinitionFromNum = async (
+  num: number
+): Promise<{ word: string; definition: string }> => {
   const $ = await getPage(`${dictionaryUrl}/someword/${num}`);
   return { word: extractWord($), definition: extractDefinition($) };
+};
+
+export const getFakeDefinition = (): {
+  word: string;
+  definition: string;
+} => {
+  const word = getRandomWord();
+  const realDefinition =
+    "the real definition the real definition the real definition the real definition the real definition the real definition the real definition the real definition";
+  return { word, definition: realDefinition };
+};
+
+export const getWordAndDefinition = async (): Promise<{
+  word: string;
+  definition: string;
+}> => {
+  if (process.env.NODE_ENV === "development") {
+    return getFakeDefinition();
+  }
+  const num = getRandomDictNumber();
+  return getDefinitionFromNum(num);
 };
 
 const extractDefinition = ($: CheerioAPI) => {
@@ -65,7 +90,7 @@ export const extractWord = ($: CheerioAPI) => {
 };
 
 export const getRandomDictNumber = () => {
-  return Math.floor(Math.random() * 83296);
+  return Math.floor(Math.random() * MAX_WORDS);
 };
 
 export { router };

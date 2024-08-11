@@ -6,15 +6,20 @@ import classNames from "classnames";
 
 export const Step2 = ({
   socket,
+  word,
   definitions,
+  definitionIdChosen,
 }: {
   socket: SocketType;
+  word: string;
   definitions: Definitions;
+  definitionIdChosen: string;
 }) => {
   const definitionList = Object.values(definitions).sort(
     (a: Definition, b: Definition) => (a.content > b.content ? 1 : -1)
   );
-  const [definitionVoted, setDefinitionVoted] = useState<string | null>(null);
+  const [definitionVoted, setDefinitionVoted] =
+    useState<string>(definitionIdChosen);
 
   const onClick = (definition: Definition) => {
     socket.emit("choose_definition", { definition });
@@ -23,6 +28,7 @@ export const Step2 = ({
 
   return (
     <div className={styles.definitionToChooseContainer}>
+      <div>{`Mot : ${word}`}</div>
       <div>Trouvez la bonne définition :</div>
       {definitionList.map((definition: Definition) => (
         <div

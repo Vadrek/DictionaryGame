@@ -3,13 +3,22 @@ import { Button, Form, FormProps } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import styles from "./Step1.module.scss";
+import { SocketType } from "./game.types";
 
 type FieldType = {
   definition: string;
 };
 
-export const Step1 = ({ socket, word }: any) => {
-  const [definition, setDefinition] = useState<string>("");
+export const Step1 = ({
+  socket,
+  word,
+  definitionWritten,
+}: {
+  socket: SocketType;
+  word: string;
+  definitionWritten: string;
+}) => {
+  const [definition, setDefinition] = useState<string>(definitionWritten);
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     setDefinition(values.definition);

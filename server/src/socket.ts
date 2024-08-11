@@ -23,6 +23,8 @@ export const socketServer = (httpServer) => {
         socket.sessionID = sessionID;
         socket.userID = session.userID;
         socket.username = session.username;
+        socket.definitionIdWritten = session.definitionIdWritten;
+        socket.definitionIdChosen = session.definitionIdChosen;
         return next();
       }
     }
@@ -32,6 +34,8 @@ export const socketServer = (httpServer) => {
     socket.sessionID = uuidv4();
     socket.userID = uuidv4();
     socket.username = username;
+    socket.definitionIdWritten = "";
+    socket.definitionIdChosen = "";
 
     next();
   });

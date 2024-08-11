@@ -11,8 +11,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { sessionStore } from "../sessionStore";
 import { Definition, Definitions, Player, Results, SocketType } from "./type";
-import { getRandomUsername, getRandomWord } from "../utils";
-import { getDefinitionFromNum, getRandomDictNumber } from "../../routes";
+import { getRandomUsername } from "../utils";
+import { getWordAndDefinition } from "../../routes";
 
 @SocketController()
 export class GameController {
@@ -34,6 +34,32 @@ export class GameController {
     this.results = {};
   }
 
+  getState(): {
+    allUsernames: string[];
+    step: number;
+    word: string;
+    definitions: Definitions;
+    realDefinitionId: string;
+    votes: number;
+    results: Results;
+  } {
+    return {
+      allUsernames: Object.values(this.players).map(
+        (player) => player.username
+      ),
+      step: this.step,
+      word: this.word,
+      definitions: this.definitions,
+      realDefinitionId: this.realDefinitionId,
+      votes: this.votes,
+      results: this.results,
+    };
+  }
+
+  getMyState(socket: SocketType): { myState: Player } {
+    return { myState: this.players[socket.userID] };
+  }
+
   @OnConnect()
   public onConnection(@ConnectedSocket() socket: SocketType) {
     const username = socket.username || getRandomUsername();
@@ -41,21 +67,13 @@ export class GameController {
       sessionID: socket.sessionID,
       userId: socket.userID,
       username,
-      definitionIdWritten: "",
-      definitionIdChosen: "",
+      definitionIdWritten: socket.definitionIdWritten || "",
+      definitionIdChosen: socket.definitionIdChosen || "",
     };
 
-    const allUsernames = Object.values(this.players).map(
-      (player) => player.username
-    );
     socket.emit("connection_accepted", {
-      username,
-      allUsernames,
-      step: this.step,
-      word: this.word,
-      definitions: this.definitions,
-      players: this.players,
-      results: this.results,
+      ...this.getMyState(socket),
+      ...this.getState(),
     });
 
     socket.emit("store_session", {
@@ -63,8 +81,6 @@ export class GameController {
       userID: socket.userID,
       username,
     });
-    console.log("connect this.players", this.players);
-    console.log("connect this.definitions", this.definitions);
   }
 
   @OnDisconnect()
@@ -78,7 +94,6 @@ export class GameController {
     const matchingSockets = await io.in(socket.userID).allSockets();
     const isDisconnected = matchingSockets.size === 0;
     if (isDisconnected) {
-      delete this.players[socket.userID];
       // notify other users
       socket.broadcast.emit("user disconnected", socket.userID);
       // update the connection status of the session
@@ -87,7 +102,10 @@ export class GameController {
         userID: socket.userID,
         username: username,
         connected: false,
+        definitionIdWritten: this.players[socket.userID].definitionIdWritten,
+        definitionIdChosen: this.players[socket.userID].definitionIdChosen,
       });
+      delete this.players[socket.userID];
     }
   }
 
@@ -100,22 +118,11 @@ export class GameController {
   ) {
     const oldUsername = this.players[socket.userID].username;
     this.players[socket.userID].username = body.username;
-    const allUsernames = Object.values(this.players).map(
-      (player) => player.username
-    );
-
-    socket.emit("connection_accepted", {
-      username: body.username,
-      allUsernames,
-      step: this.step,
-      word: this.word,
-      definitions: this.definitions,
-      players: this.players,
-      results: this.results,
-    });
 
     socket.broadcast.emit("update_usernames", {
-      allUsernames,
+      allUsernames: Object.values(this.players).map(
+        (player) => player.username
+      ),
     });
 
     io.emit("receive_msg", {
@@ -142,23 +149,13 @@ export class GameController {
       player.definitionIdChosen = "";
     });
 
-    io.emit("game_restarted", {
-      step: this.step,
-      word: this.word,
-      definitions: this.definitions,
-    });
+    io.emit("game_restarted", this.getState());
   }
 
   @OnMessage("start_game")
   public async startGame(@SocketIO() io: any) {
     this.step = 1;
-    // this.word = getRandomWord();
-    // const realDefinition =
-    //   "the real definition the real definition the real definition the real definition the real definition the real definition the real definition the real definition";
-
-    // const num = 80000;
-    const num = getRandomDictNumber();
-    const { word, definition } = await getDefinitionFromNum(num);
+    const { word, definition } = await getWordAndDefinition();
     this.word = word;
     const realDefinition = definition;
     const realDefinitionId = uuidv4();
@@ -178,7 +175,7 @@ export class GameController {
       voters: [],
     };
 
-    io.emit("game_started", { step: this.step, word: this.word });
+    io.emit("game_started", this.getState());
   }
 
   @OnMessage("write_definition")
@@ -211,10 +208,7 @@ export class GameController {
         };
       });
 
-      io.emit("definitions_acquired", {
-        step: this.step,
-        definitions: this.definitions,
-      });
+      io.emit("definitions_acquired", this.getState());
     }
   }
 
@@ -236,10 +230,7 @@ export class GameController {
     if (this.votes === Object.keys(this.players).length) {
       this.step = 3;
 
-      io.emit("definitions_chosen", {
-        step: this.step,
-        results: this.results,
-      });
+      io.emit("definitions_chosen", this.getState());
     }
   }
 }

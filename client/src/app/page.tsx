@@ -16,7 +16,8 @@ export default function Home() {
   const [allUsernames, setAllUsernames] = useState<string[]>([]);
   const [form] = Form.useForm();
 
-  const onConnectionAccepted = ({ username, allUsernames }: any) => {
+  const onConnectionAccepted = ({ myState, allUsernames }: any) => {
+    const username = myState.username;
     setUsername(username);
     form.setFieldsValue({ username: username });
     setAllUsernames(allUsernames);
@@ -84,9 +85,7 @@ export default function Home() {
         {`Connectés : ${allUsernames.join(", ")}`}
         <ChatCompo roomId={"23"} username={username} socket={socket} />
       </Col>
-      <Col span={16}>
-        <GameCompo socket={socket} />
-      </Col>
+      <Col span={16}>{socket && <GameCompo socket={socket} />}</Col>
     </Row>
   );
 }
