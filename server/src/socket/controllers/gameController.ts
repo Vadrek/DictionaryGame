@@ -81,6 +81,17 @@ export class GameController {
       userID: socket.userID,
       username,
     });
+
+    socket.broadcast.emit("update_usernames", {
+      allUsernames: Object.values(this.players).map(
+        (player) => player.username
+      ),
+    });
+
+    socket.broadcast.emit("receive_msg", {
+      user: "",
+      msg: `"${username}" s'est connecté !`,
+    });
   }
 
   @OnDisconnect()
@@ -95,8 +106,10 @@ export class GameController {
     const isDisconnected = matchingSockets.size === 0;
     if (isDisconnected) {
       // notify other users
-      socket.broadcast.emit("user disconnected", socket.userID);
-      // update the connection status of the session
+      socket.broadcast.emit("receive_msg", {
+        user: "",
+        msg: `"${username}" s'est déconnecté`,
+      });
 
       sessionStore.saveSession(socket.sessionID, {
         userID: socket.userID,
@@ -148,6 +161,8 @@ export class GameController {
       player.definitionIdWritten = "";
       player.definitionIdChosen = "";
     });
+
+    sessionStore.restartGameSession();
 
     io.emit("game_restarted", this.getState());
   }

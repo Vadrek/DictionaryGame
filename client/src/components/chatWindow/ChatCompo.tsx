@@ -59,9 +59,9 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
               >
                 {user.charAt(0)}
               </span>
-              <h3 style={{ textAlign: user == username ? "right" : "left" }}>
+              <p style={{ textAlign: user == username ? "right" : "left" }}>
                 {msg}
-              </h3>
+              </p>
             </div>
           ))}
         </div>

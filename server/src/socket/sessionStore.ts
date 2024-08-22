@@ -16,6 +16,16 @@ class SessionStore {
   findAllSessions() {
     return [...this.sessions.values()];
   }
+
+  restartGameSession() {
+    for (const [key, value] of this.sessions.entries()) {
+      this.sessions.set(key, {
+        ...value,
+        definitionIdWritten: "",
+        definitionIdChosen: "",
+      });
+    }
+  }
 }
 
 export const sessionStore = new SessionStore();
