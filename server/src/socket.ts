@@ -1,8 +1,12 @@
-import { useSocketServer } from "socket-controllers";
+import { SocketControllers } from "socket-controllers";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import { sessionStore } from "./socket/sessionStore";
 import { SocketType } from "./socket/controllers/type";
+import { GameController } from "./socket/controllers/gameController";
+import { Container } from "typedi";
+import { CanvasController } from "./socket/controllers/canvasController";
+import { RoomController } from "./socket/controllers/roomController";
 
 export const socketServer = (httpServer) => {
   const io = new Server(httpServer, {
@@ -40,8 +44,10 @@ export const socketServer = (httpServer) => {
     next();
   });
 
-  useSocketServer(io, {
-    controllers: [__dirname + "/socket/controllers/*.ts"],
+  new SocketControllers({
+    io,
+    container: Container,
+    controllers: [GameController, CanvasController, RoomController],
   });
 
   return io;

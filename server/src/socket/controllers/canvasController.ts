@@ -20,6 +20,7 @@ import {
 } from "../canvasGameLogic/constants";
 import { Square } from "../canvasGameLogic/type";
 import { PlayerCanvas } from "./type";
+import { Service } from "typedi";
 
 function getRandomColor() {
   var letters = "0123456789ABCDEF";
@@ -30,6 +31,7 @@ function getRandomColor() {
   return color;
 }
 
+@Service()
 @SocketController()
 export class CanvasController {
   public players: Record<string, PlayerCanvas>;

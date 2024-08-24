@@ -6,7 +6,9 @@ import {
   SocketIO,
 } from "socket-controllers";
 import { Server, Socket } from "socket.io";
+import { Service } from "typedi";
 
+@Service()
 @SocketController()
 export class RoomController {
   @OnMessage("join_game")

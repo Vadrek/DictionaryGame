@@ -13,7 +13,9 @@ import { sessionStore } from "../sessionStore";
 import { Definition, Definitions, Player, Results, SocketType } from "./type";
 import { getRandomUsername } from "../utils";
 import { getWordAndDefinition } from "../../routes";
+import { Service } from "typedi";
 
+@Service()
 @SocketController()
 export class GameController {
   public players: Record<string, Player>;
