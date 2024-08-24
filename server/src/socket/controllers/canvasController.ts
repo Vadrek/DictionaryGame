@@ -5,7 +5,6 @@ import {
   OnDisconnect,
   OnMessage,
   SocketController,
-  SocketIO,
 } from "socket-controllers";
 import { Socket } from "socket.io";
 

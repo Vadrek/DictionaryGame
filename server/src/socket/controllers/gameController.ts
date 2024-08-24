@@ -62,6 +62,10 @@ export class GameController {
 
   @OnConnect()
   public onConnection(@ConnectedSocket() socket: SocketType) {
+    console.log("onConnection");
+    const allSessions = sessionStore.findAllSessions();
+    console.log("allSessions", allSessions);
+
     const username = socket.username || getRandomUsername();
     this.players[socket.userID] = {
       sessionID: socket.sessionID,
