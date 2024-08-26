@@ -35,23 +35,23 @@ export default function Home() {
     setAllUsernames(allUsernames);
   };
 
-  const onStoreSession = ({ sessionID, userID, username }: any) => {
+  const onStoreSession = ({ sessionId, userId, username }: any) => {
     if (!socket) return;
     // attach the session ID to the next reconnection attempts
-    socket.auth = { sessionID, username };
+    socket.auth = { sessionId, username };
     // store it in the localStorage
-    sessionStorage.setItem("sessionID", sessionID);
+    sessionStorage.setItem("sessionId", sessionId);
     sessionStorage.setItem("username", username);
     // save the ID of the user
-    socket.userID = userID;
+    socket.userId = userId;
     socket.username = username;
   };
 
   useEffect(() => {
     if (socket) {
-      const sessionID = sessionStorage.getItem("sessionID");
+      const sessionId = sessionStorage.getItem("sessionId");
       const username = sessionStorage.getItem("username");
-      socket.auth = { sessionID, username };
+      socket.auth = { sessionId, username };
       socket.on("connection_accepted", onConnectionAccepted);
       socket.on("update_usernames", onUpdateUsernames);
       socket.on("store_session", onStoreSession);

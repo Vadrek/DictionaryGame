@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 
 export type Player = {
-  sessionID: string;
+  sessionId: string;
   userId: string;
   username: string;
   definitionIdWritten: string;
@@ -9,9 +9,9 @@ export type Player = {
 };
 
 export type SocketType = Socket & {
-  userID?: string;
+  userId?: string;
   username?: string;
-  sessionID?: string;
+  sessionId?: string;
 };
 
 export type Definition = {

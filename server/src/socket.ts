@@ -18,26 +18,28 @@ export const socketServer = (httpServer) => {
   });
 
   io.use((socket: SocketType, next) => {
-    const sessionID = socket.handshake.auth.sessionID;
+    const sessionId = socket.handshake.auth.sessionId;
 
-    if (sessionID) {
+    if (sessionId) {
       // find existing session
-      const session = sessionStore.findSession(sessionID);
+      const session = sessionStore.findSession(sessionId);
       if (session) {
-        socket.sessionID = sessionID;
-        socket.userID = session.userID;
+        socket.sessionId = sessionId;
+        socket.userId = session.userId;
         socket.username = session.username;
         socket.definitionIdWritten = session.definitionIdWritten;
         socket.definitionIdChosen = session.definitionIdChosen;
+        socket.score = session.score;
         return next();
       }
     }
     const username = socket.handshake.auth.username;
 
     // create new session
-    socket.sessionID = uuidv4();
-    socket.userID = uuidv4();
+    socket.sessionId = uuidv4();
+    socket.userId = uuidv4();
     socket.username = username;
+    socket.score = 0;
     socket.definitionIdWritten = "";
     socket.definitionIdChosen = "";
 

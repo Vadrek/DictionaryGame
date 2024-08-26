@@ -9,27 +9,22 @@ export type PlayerCanvas = {
 };
 
 export type Player = {
-  sessionID: string;
+  sessionId: string;
   userId: string;
   username: string;
+  score: number;
   definitionIdWritten: string;
   definitionIdChosen: string;
 };
 
-export type SocketType = Socket & {
-  userID: string;
-  username: string;
-  sessionID: string;
-  definitionIdWritten: string;
-  definitionIdChosen: string;
-};
+export type SocketType = Socket & Player;
 
 export type Definition = {
   id: string;
   content: string;
 };
 
-export type Definitions = Record<string, Definition>; // key = userID
+export type Definitions = Record<string, Definition>; // key = userId
 
 export type Result = {
   id: string;

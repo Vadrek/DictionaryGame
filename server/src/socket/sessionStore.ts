@@ -1,8 +1,14 @@
+import cron from "node-cron";
+
 class SessionStore {
   public sessions: Map<string, any>;
 
   constructor() {
     this.sessions = new Map();
+    cron.schedule("0 0 * * *", () => {
+      console.log("cleaning all sessions every day at midnight");
+      this.cleanAllSessions();
+    });
   }
 
   findSession(id) {
@@ -25,6 +31,10 @@ class SessionStore {
         definitionIdChosen: "",
       });
     }
+  }
+
+  cleanAllSessions() {
+    this.sessions.clear();
   }
 }
 

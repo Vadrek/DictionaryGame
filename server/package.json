@@ -15,6 +15,7 @@
     "express": "^4.19.2",
     "glob": "^7.1.7",
     "http-errors": "~1.6.3",
+    "node-cron": "^3.0.3",
     "reflect-metadata": "^0.1.13",
     "socket-controllers": "^0.3.1",
     "socket.io": "^4.1.2",

@@ -15,6 +15,9 @@ import { getRandomUsername } from "../utils";
 import { getWordAndDefinition } from "../../routes";
 import { Service } from "typedi";
 
+const SCORE_GUESS_RIGHT = 3;
+const SCORE_GET_VOTE = 1;
+
 @Service()
 @SocketController()
 export class GameController {
@@ -59,16 +62,17 @@ export class GameController {
   }
 
   getMyState(socket: SocketType): { myState: Player } {
-    return { myState: this.players[socket.userID] };
+    return { myState: this.players[socket.userId] };
   }
 
   @OnConnect()
   public onConnection(@ConnectedSocket() socket: SocketType) {
     const username = socket.username || getRandomUsername();
-    this.players[socket.userID] = {
-      sessionID: socket.sessionID,
-      userId: socket.userID,
+    this.players[socket.userId] = {
+      sessionId: socket.sessionId,
+      userId: socket.userId,
       username,
+      score: socket.score || 0,
       definitionIdWritten: socket.definitionIdWritten || "",
       definitionIdChosen: socket.definitionIdChosen || "",
     };
@@ -79,8 +83,8 @@ export class GameController {
     });
 
     socket.emit("store_session", {
-      sessionID: socket.sessionID,
-      userID: socket.userID,
+      sessionId: socket.sessionId,
+      userId: socket.userId,
       username,
     });
 
@@ -102,9 +106,9 @@ export class GameController {
     socket: SocketType,
     @SocketIO() io: any
   ) {
-    const username = this.players[socket.userID].username;
+    const username = this.players[socket.userId].username;
 
-    const matchingSockets = await io.in(socket.userID).allSockets();
+    const matchingSockets = await io.in(socket.userId).allSockets();
     const isDisconnected = matchingSockets.size === 0;
     if (isDisconnected) {
       // notify other users
@@ -113,14 +117,15 @@ export class GameController {
         msg: `"${username}" s'est déconnecté`,
       });
 
-      sessionStore.saveSession(socket.sessionID, {
-        userID: socket.userID,
+      sessionStore.saveSession(socket.sessionId, {
+        userId: socket.userId,
         username: username,
         connected: false,
-        definitionIdWritten: this.players[socket.userID].definitionIdWritten,
-        definitionIdChosen: this.players[socket.userID].definitionIdChosen,
+        score: this.players[socket.userId].score,
+        definitionIdWritten: this.players[socket.userId].definitionIdWritten,
+        definitionIdChosen: this.players[socket.userId].definitionIdChosen,
       });
-      delete this.players[socket.userID];
+      delete this.players[socket.userId];
     }
   }
 
@@ -131,8 +136,8 @@ export class GameController {
     @MessageBody()
     body: { username: string }
   ) {
-    const oldUsername = this.players[socket.userID].username;
-    this.players[socket.userID].username = body.username;
+    const oldUsername = this.players[socket.userId].username;
+    this.players[socket.userId].username = body.username;
 
     socket.broadcast.emit("update_usernames", {
       allUsernames: Object.values(this.players).map(
@@ -203,8 +208,8 @@ export class GameController {
     body: { definitionContent: string }
   ) {
     const definitionId = uuidv4();
-    this.players[socket.userID].definitionIdWritten = definitionId;
-    this.definitions[socket.userID] = {
+    this.players[socket.userId].definitionIdWritten = definitionId;
+    this.definitions[socket.userId] = {
       id: definitionId,
       content: body.definitionContent,
     };
@@ -236,9 +241,7 @@ export class GameController {
     @MessageBody()
     body: { definition: Definition }
   ) {
-    this.players[socket.userID].definitionIdChosen = body.definition.id;
-    this.results[body.definition.id].voters.push(this.players[socket.userID]);
-
+    this.players[socket.userId].definitionIdChosen = body.definition.id;
     this.votes = Object.values(this.players).reduce((acc, player) => {
       if (player.definitionIdChosen) {
         return acc + 1;
@@ -246,8 +249,15 @@ export class GameController {
     }, 0);
     if (this.votes === Object.keys(this.players).length) {
       this.step = 3;
+      this.buildResultVotes();
 
       io.emit("definitions_chosen", this.getState());
     }
   }
+
+  public buildResultVotes = () => {
+    for (const player of Object.values(this.players)) {
+      this.results[player.definitionIdChosen].voters.push(player);
+    }
+  };
 }
