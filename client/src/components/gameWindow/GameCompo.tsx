@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 
-import { Step0 } from "./Step0";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
 import { Step3 } from "./Step3";
@@ -10,13 +9,20 @@ import { Definitions, Results, SocketType } from "./game.types";
 
 import styles from "./GameCompo.module.scss";
 
-export const GameCompo = ({ socket }: { socket: SocketType }) => {
+export const GameCompo = ({
+  socket,
+  allUsernames,
+}: {
+  socket: SocketType;
+  allUsernames: Record<string, string>;
+}) => {
   const [step, setStep] = useState<number>(0);
   const [definitions, setDefinitions] = useState<Definitions>({});
   const [word, setWord] = useState<string>("");
   const [results, setResults] = useState<Results>({});
   const [definitionWritten, setDefinitionWritten] = useState<string>("");
   const [definitionIdChosen, setDefinitionIdChosen] = useState<string>("");
+  const [scores, setScores] = useState<Record<string, number>>({});
 
   const updateState = ({
     step: currentStep,
@@ -24,6 +30,7 @@ export const GameCompo = ({ socket }: { socket: SocketType }) => {
     definitions: currentDefinitions,
     players: currentPlayers,
     results: currentResults,
+    scores: currentScores,
     myState,
   }: any) => {
     if (myState) {
@@ -35,8 +42,7 @@ export const GameCompo = ({ socket }: { socket: SocketType }) => {
     setWord(currentWord);
     setDefinitions(currentDefinitions);
     setResults(currentResults);
-
-    console.log("currentPlayers", currentPlayers, "definitions", definitions);
+    setScores(currentScores);
   };
 
   useEffect(() => {
@@ -59,16 +65,33 @@ export const GameCompo = ({ socket }: { socket: SocketType }) => {
 
   return (
     <div className={styles.mainDiv}>
-      {step > 0 && (
-        <Button
-          onClick={() => {
-            socket.emit("restart_game");
-          }}
-        >
-          Restart
-        </Button>
-      )}
-      {step === 0 && <Step0 socket={socket} />}
+      <div className={styles.topDiv}>
+        {step === 0 ? (
+          <Button
+            onClick={() => {
+              socket.emit("start_game");
+            }}
+          >
+            Start Game
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              socket.emit("restart_game");
+            }}
+          >
+            Restart
+          </Button>
+        )}
+        <div className={styles.scoresDiv}>
+          <h2>Scores</h2>
+          {Object.keys(scores).map((userId) => (
+            <div>
+              {allUsernames[userId]}: {scores[userId]}
+            </div>
+          ))}
+        </div>
+      </div>
       {step === 1 && (
         <Step1
           socket={socket}

@@ -13,7 +13,7 @@ type FieldType = {
 export default function Home() {
   const socket = useSocket();
   const [username, setUsername] = useState<string>("");
-  const [allUsernames, setAllUsernames] = useState<string[]>([]);
+  const [allUsernames, setAllUsernames] = useState<Record<string, string>>({});
   const [form] = Form.useForm();
 
   const onConnectionAccepted = ({ myState, allUsernames }: any) => {
@@ -32,6 +32,7 @@ export default function Home() {
   };
 
   const onUpdateUsernames = ({ allUsernames }: any) => {
+    console.log("onUpdateUsernames, allUsernames:", allUsernames);
     setAllUsernames(allUsernames);
   };
 
@@ -82,10 +83,12 @@ export default function Home() {
           </Form.Item>
         </Form>
 
-        {`Connectés : ${allUsernames.join(", ")}`}
+        {`Connectés : ${Object.values(allUsernames).join(", ")}`}
         <ChatCompo roomId={"23"} username={username} socket={socket} />
       </Col>
-      <Col span={16}>{socket && <GameCompo socket={socket} />}</Col>
+      <Col span={16}>
+        {socket && <GameCompo socket={socket} allUsernames={allUsernames} />}
+      </Col>
     </Row>
   );
 }

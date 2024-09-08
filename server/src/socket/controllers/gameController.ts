@@ -26,8 +26,9 @@ export class GameController {
   public word: string;
   public definitions: Definitions;
   public realDefinitionId: string;
-  public votes: number;
+  public nbVotes: number;
   public results: Results;
+  public scores: Record<string, number>;
 
   constructor() {
     this.players = {};
@@ -35,29 +36,32 @@ export class GameController {
     this.word = "";
     this.definitions = {};
     this.realDefinitionId = "";
-    this.votes = 0;
+    this.nbVotes = 0;
     this.results = {};
+    this.scores = {};
   }
 
   getState(): {
-    allUsernames: string[];
+    // allUsernames: Record<string, string>;
     step: number;
     word: string;
     definitions: Definitions;
     realDefinitionId: string;
     votes: number;
     results: Results;
+    scores: Record<string, number>;
   } {
     return {
-      allUsernames: Object.values(this.players).map(
-        (player) => player.username
-      ),
+      // allUsernames: Object.values(this.players).reduce((acc, player) => {
+      //   return { ...acc, [player.userId]: player.username };
+      // }, {}),
       step: this.step,
       word: this.word,
       definitions: this.definitions,
       realDefinitionId: this.realDefinitionId,
-      votes: this.votes,
+      votes: this.nbVotes,
       results: this.results,
+      scores: this.scores,
     };
   }
 
@@ -66,7 +70,10 @@ export class GameController {
   }
 
   @OnConnect()
-  public onConnection(@ConnectedSocket() socket: SocketType) {
+  public onConnection(
+    @ConnectedSocket() socket: SocketType,
+    @SocketIO() io: any
+  ) {
     const username = socket.username || getRandomUsername();
     this.players[socket.userId] = {
       sessionId: socket.sessionId,
@@ -76,6 +83,10 @@ export class GameController {
       definitionIdWritten: socket.definitionIdWritten || "",
       definitionIdChosen: socket.definitionIdChosen || "",
     };
+
+    if (!socket.score) {
+      this.scores[socket.userId] = 0;
+    }
 
     socket.emit("connection_accepted", {
       ...this.getMyState(socket),
@@ -88,10 +99,10 @@ export class GameController {
       username,
     });
 
-    socket.broadcast.emit("update_usernames", {
-      allUsernames: Object.values(this.players).map(
-        (player) => player.username
-      ),
+    io.emit("update_usernames", {
+      allUsernames: Object.values(this.players).reduce((acc, player) => {
+        return { ...acc, [player.userId]: player.username };
+      }, {}),
     });
 
     socket.broadcast.emit("receive_msg", {
@@ -139,10 +150,10 @@ export class GameController {
     const oldUsername = this.players[socket.userId].username;
     this.players[socket.userId].username = body.username;
 
-    socket.broadcast.emit("update_usernames", {
-      allUsernames: Object.values(this.players).map(
-        (player) => player.username
-      ),
+    io.emit("update_usernames", {
+      allUsernames: Object.values(this.players).reduce((acc, player) => {
+        return { ...acc, [player.userId]: player.username };
+      }, {}),
     });
 
     io.emit("receive_msg", {
@@ -242,15 +253,17 @@ export class GameController {
     body: { definition: Definition }
   ) {
     this.players[socket.userId].definitionIdChosen = body.definition.id;
-    this.votes = Object.values(this.players).reduce((acc, player) => {
+    this.nbVotes = Object.values(this.players).reduce((acc, player) => {
       if (player.definitionIdChosen) {
         return acc + 1;
       }
     }, 0);
-    if (this.votes === Object.keys(this.players).length) {
+    if (this.nbVotes === Object.keys(this.players).length) {
       this.step = 3;
       this.buildResultVotes();
-
+      this.computeScores();
+      // console.log("hey results", JSON.stringify(this.results, null, 2));
+      console.log("this.scores", this.scores);
       io.emit("definitions_chosen", this.getState());
     }
   }
@@ -258,6 +271,22 @@ export class GameController {
   public buildResultVotes = () => {
     for (const player of Object.values(this.players)) {
       this.results[player.definitionIdChosen].voters.push(player);
+    }
+  };
+
+  public computeScores = () => {
+    for (const result of Object.values(this.results)) {
+      if (result.isReal) {
+        result.voters.forEach((voter) => {
+          this.scores[voter.userId] += SCORE_GUESS_RIGHT;
+          // this.players[voter.userId].score += SCORE_GUESS_RIGHT;
+        });
+      } else {
+        const authorId = result.author.userId;
+        this.scores[authorId] +=
+          result.voters.filter((voter) => voter.userId !== authorId).length *
+          SCORE_GET_VOTE;
+      }
     }
   };
 }

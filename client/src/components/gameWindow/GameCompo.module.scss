@@ -3,5 +3,19 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 10rem;
+  gap: 5rem;
+}
+
+.scoresDiv {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  // align-items: center;
+  background-color: beige;
+  right: 100px;
+}
+
+.topDiv {
+  display: flex;
 }
