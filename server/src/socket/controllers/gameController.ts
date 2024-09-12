@@ -42,7 +42,6 @@ export class GameController {
   }
 
   getState(): {
-    // allUsernames: Record<string, string>;
     step: number;
     word: string;
     definitions: Definitions;
@@ -52,9 +51,6 @@ export class GameController {
     scores: Record<string, number>;
   } {
     return {
-      // allUsernames: Object.values(this.players).reduce((acc, player) => {
-      //   return { ...acc, [player.userId]: player.username };
-      // }, {}),
       step: this.step,
       word: this.word,
       definitions: this.definitions,
@@ -97,6 +93,7 @@ export class GameController {
       sessionId: socket.sessionId,
       userId: socket.userId,
       username,
+      score: socket.score,
     });
 
     io.emit("update_usernames", {
@@ -262,8 +259,6 @@ export class GameController {
       this.step = 3;
       this.buildResultVotes();
       this.computeScores();
-      // console.log("hey results", JSON.stringify(this.results, null, 2));
-      console.log("this.scores", this.scores);
       io.emit("definitions_chosen", this.getState());
     }
   }
@@ -279,7 +274,6 @@ export class GameController {
       if (result.isReal) {
         result.voters.forEach((voter) => {
           this.scores[voter.userId] += SCORE_GUESS_RIGHT;
-          // this.players[voter.userId].score += SCORE_GUESS_RIGHT;
         });
       } else {
         const authorId = result.author.userId;

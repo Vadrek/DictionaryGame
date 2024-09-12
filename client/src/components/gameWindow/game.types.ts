@@ -12,6 +12,7 @@ export type SocketType = Socket & {
   userId?: string;
   username?: string;
   sessionId?: string;
+  score?: number;
 };
 
 export type Definition = {

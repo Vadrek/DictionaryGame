@@ -35,6 +35,9 @@ export const Step3 = ({
       return -1;
     });
 
+  const goodAnswers = dataSource.filter((definition) => definition.isReal);
+  const winners = goodAnswers.length > 0 ? goodAnswers[0].voters : "Personne";
+
   return (
     <div>
       <div>{`Mot : ${word}`}</div>
@@ -67,7 +70,7 @@ export const Step3 = ({
       </table>
       <div className={styles.scoreRecap}>
         <div>La bonne réponse a été trouvée par :</div>
-        {dataSource.filter((definition) => definition.isReal)[0].voters}
+        {winners}
       </div>
     </div>
   );

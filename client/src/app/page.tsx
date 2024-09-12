@@ -36,16 +36,18 @@ export default function Home() {
     setAllUsernames(allUsernames);
   };
 
-  const onStoreSession = ({ sessionId, userId, username }: any) => {
+  const onStoreSession = ({ sessionId, userId, username, score }: any) => {
     if (!socket) return;
     // attach the session ID to the next reconnection attempts
-    socket.auth = { sessionId, username };
+    socket.auth = { sessionId, username, score };
     // store it in the localStorage
     sessionStorage.setItem("sessionId", sessionId);
     sessionStorage.setItem("username", username);
+    sessionStorage.setItem("score", score);
     // save the ID of the user
     socket.userId = userId;
     socket.username = username;
+    socket.score = score;
   };
 
   useEffect(() => {
