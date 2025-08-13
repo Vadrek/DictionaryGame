@@ -28,7 +28,7 @@ export const GameCompo = ({
     step: currentStep,
     word: currentWord,
     definitions: currentDefinitions,
-    players: currentPlayers,
+    // players: currentPlayers,
     results: currentResults,
     scores: currentScores,
     myState,
@@ -45,29 +45,48 @@ export const GameCompo = ({
     setScores(currentScores);
   };
 
+  const eventList = [
+    "connection_accepted",
+    "game_restarted",
+    "game_started",
+    "definitions_acquired",
+    "definitions_chosen",
+    "update_state",
+  ];
+
   useEffect(() => {
     if (socket) {
-      socket.on("connection_accepted", updateState);
-      socket.on("game_restarted", updateState);
-      socket.on("game_started", updateState);
-      socket.on("definitions_acquired", updateState);
-      socket.on("definitions_chosen", updateState);
+      eventList.forEach((event) => {
+        socket.on(event, updateState);
+      });
 
       return () => {
-        socket.off("connection_accepted", updateState);
-        socket.off("game_restarted", updateState);
-        socket.off("game_started", updateState);
-        socket.off("definitions_acquired", updateState);
-        socket.off("definitions_chosen", updateState);
+        eventList.forEach((event) => {
+          socket.off(event, updateState);
+        });
       };
     }
   }, [socket]);
+
+  console.log("scores", scores);
+  const scoresAndNames = Object.entries(scores)
+    .map(([userId, score]) => ({
+      userId,
+      score,
+      name: allUsernames[userId],
+    }))
+    .sort((a, b) => {
+      if (a.score > b.score) return -1;
+      if (a.score < b.score) return 1;
+      return a.name.localeCompare(b.name);
+    });
 
   return (
     <div className={styles.mainDiv}>
       <div className={styles.topDiv}>
         {step === 0 ? (
           <Button
+            type="primary"
             onClick={() => {
               socket.emit("start_game");
             }}
@@ -83,11 +102,12 @@ export const GameCompo = ({
             Restart
           </Button>
         )}
+
         <div className={styles.scoresDiv}>
           <h2>Scores</h2>
-          {Object.keys(scores).map((userId) => (
-            <div>
-              {allUsernames[userId]}: {scores[userId]}
+          {scoresAndNames.map(({ userId, name, score }) => (
+            <div key={userId}>
+              {name}: {score}
             </div>
           ))}
         </div>

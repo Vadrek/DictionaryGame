@@ -16,11 +16,10 @@ export default function Home() {
   const [allUsernames, setAllUsernames] = useState<Record<string, string>>({});
   const [form] = Form.useForm();
 
-  const onConnectionAccepted = ({ myState, allUsernames }: any) => {
+  const onConnectionAccepted = ({ myState }: any) => {
     const username = myState.username;
     setUsername(username);
     form.setFieldsValue({ username: username });
-    setAllUsernames(allUsernames);
   };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
@@ -32,7 +31,7 @@ export default function Home() {
   };
 
   const onUpdateUsernames = ({ allUsernames }: any) => {
-    console.log("onUpdateUsernames, allUsernames:", allUsernames);
+    console.log("hey allUsernames", allUsernames);
     setAllUsernames(allUsernames);
   };
 
@@ -54,7 +53,8 @@ export default function Home() {
     if (socket) {
       const sessionId = sessionStorage.getItem("sessionId");
       const username = sessionStorage.getItem("username");
-      socket.auth = { sessionId, username };
+      const score = sessionStorage.getItem("score");
+      socket.auth = { sessionId, username, score };
       socket.on("connection_accepted", onConnectionAccepted);
       socket.on("update_usernames", onUpdateUsernames);
       socket.on("store_session", onStoreSession);

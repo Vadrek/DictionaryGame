@@ -1,0 +1,27 @@
+{
+  "name": "dictionarygame",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "scripts": {
+    "server": "pnpm --prefix server start",
+    "client": "pnpm --prefix client dev",
+    "dev": "concurrently 'pnpm run server' 'pnpm run client'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vadrek/DictionaryGame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Vadrek/DictionaryGame/issues"
+  },
+  "homepage": "https://github.com/Vadrek/DictionaryGame#readme",
+  "dependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "packageManager": "pnpm@9.15.5+sha512.845196026aab1cc3f098a0474b64dfbab2afe7a1b4e91dd86895d8e4aa32a7a6d03049e2d0ad770bbe4de023a7122fb68c1a1d6e0d033c7076085f9d5d4800d4"
+}

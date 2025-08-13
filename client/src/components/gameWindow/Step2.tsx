@@ -33,19 +33,10 @@ export const Step2 = ({
       {definitionList.map((definition: Definition) => (
         <div
           key={definition.id}
-          className={classNames(
-            styles.definitionItem,
-            // styles.definitionToChoose,
-            {
-              [styles.definitionToChoose]: definition.id !== definitionVoted,
-              [styles.definitionChosen]: definition.id === definitionVoted,
-            }
-          )}
-          // className={
-          //   definitionVoted === definition.id
-          //     ? styles.definitionToChosen
-          //     : styles.definitionToChoose
-          // }
+          className={classNames(styles.definitionItem, {
+            [styles.definitionToChoose]: definition.id !== definitionVoted,
+            [styles.definitionChosen]: definition.id === definitionVoted,
+          })}
           onClick={() => onClick(definition)}
         >
           {definition.content}

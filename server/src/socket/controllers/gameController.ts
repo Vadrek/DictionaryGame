@@ -28,7 +28,6 @@ export class GameController {
   public realDefinitionId: string;
   public nbVotes: number;
   public results: Results;
-  public scores: Record<string, number>;
 
   constructor() {
     this.players = {};
@@ -38,7 +37,6 @@ export class GameController {
     this.realDefinitionId = "";
     this.nbVotes = 0;
     this.results = {};
-    this.scores = {};
   }
 
   getState(): {
@@ -57,7 +55,10 @@ export class GameController {
       realDefinitionId: this.realDefinitionId,
       votes: this.nbVotes,
       results: this.results,
-      scores: this.scores,
+      scores: Object.keys(this.players).reduce(
+        (acc, userId) => ({ ...acc, [userId]: this.players[userId].score }),
+        {}
+      ),
     };
   }
 
@@ -80,10 +81,6 @@ export class GameController {
       definitionIdChosen: socket.definitionIdChosen || "",
     };
 
-    if (!socket.score) {
-      this.scores[socket.userId] = 0;
-    }
-
     socket.emit("connection_accepted", {
       ...this.getMyState(socket),
       ...this.getState(),
@@ -100,6 +97,10 @@ export class GameController {
       allUsernames: Object.values(this.players).reduce((acc, player) => {
         return { ...acc, [player.userId]: player.username };
       }, {}),
+    });
+
+    socket.broadcast.emit("update_state", {
+      ...this.getState(),
     });
 
     socket.broadcast.emit("receive_msg", {
@@ -119,7 +120,6 @@ export class GameController {
     const matchingSockets = await io.in(socket.userId).allSockets();
     const isDisconnected = matchingSockets.size === 0;
     if (isDisconnected) {
-      // notify other users
       socket.broadcast.emit("receive_msg", {
         user: "",
         msg: `"${username}" s'est déconnecté`,
@@ -134,6 +134,10 @@ export class GameController {
         definitionIdChosen: this.players[socket.userId].definitionIdChosen,
       });
       delete this.players[socket.userId];
+
+      socket.broadcast.emit("update_state", {
+        ...this.getState(),
+      });
     }
   }
 
@@ -273,11 +277,11 @@ export class GameController {
     for (const result of Object.values(this.results)) {
       if (result.isReal) {
         result.voters.forEach((voter) => {
-          this.scores[voter.userId] += SCORE_GUESS_RIGHT;
+          this.players[voter.userId].score += SCORE_GUESS_RIGHT;
         });
       } else {
         const authorId = result.author.userId;
-        this.scores[authorId] +=
+        this.players[authorId].score +=
           result.voters.filter((voter) => voter.userId !== authorId).length *
           SCORE_GET_VOTE;
       }
