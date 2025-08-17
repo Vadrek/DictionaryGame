@@ -7,17 +7,17 @@ export const colorSquare = (id: string, color: string) => {
 
 export const writeText = (
   ctx: CanvasRenderingContext2D,
-  info: { x: number; y: number; text: string }
+  info: { x: number; y: number; text: string },
 ) => {
   const { text, x, y } = info;
 
   const fontSize = 20;
-  const fontFamily = "Arial";
-  const color = "black";
-  const textAlign = "left";
-  const textBaseline = "top";
+  const fontFamily = 'Arial';
+  const color = 'black';
+  const textAlign = 'left';
+  const textBaseline = 'top';
   ctx.beginPath();
-  ctx.font = fontSize + "px " + fontFamily;
+  ctx.font = fontSize + 'px ' + fontFamily;
   ctx.textAlign = textAlign;
   ctx.textBaseline = textBaseline;
   ctx.fillStyle = color;

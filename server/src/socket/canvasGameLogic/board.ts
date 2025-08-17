@@ -1,5 +1,5 @@
-import { TRANSPARENT_COLOR } from "./constants";
-import { Square } from "./type";
+import { TRANSPARENT_COLOR } from './constants';
+import { Square } from './type';
 
 export function initBoard(nbRows: number, nbColumns: number): Square[][] {
   const board: Square[][] = [];
@@ -15,5 +15,5 @@ export function initBoard(nbRows: number, nbColumns: number): Square[][] {
 
 export const EMPTY_SQUARE = {
   color: TRANSPARENT_COLOR,
-  time: "",
+  time: '',
 };

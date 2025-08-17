@@ -1,25 +1,25 @@
-import express from "express";
-import axios from "axios";
-import { CheerioAPI, load as cheerioLoad } from "cheerio";
-import { getRandomWord } from "../socket/utils";
+import express from 'express';
+import axios from 'axios';
+import { CheerioAPI, load as cheerioLoad } from 'cheerio';
+import { getRandomWord } from '../socket/utils';
 
 const router = express.Router();
 
-const dictionaryUrl = "https://www.larousse.fr/dictionnaires/francais";
+const dictionaryUrl = 'https://www.larousse.fr/dictionnaires/francais';
 const MAX_WORDS = 83296;
 
-router.get("/", function (req, res) {
-  res.send("Hello Boy!!");
+router.get('/', function (req, res) {
+  res.send('Hello Boy!!');
 });
 
-router.get("/word/:word", async function (req, res) {
+router.get('/word/:word', async function (req, res) {
   const word = req.params.word;
   const wordUrl = `${dictionaryUrl}/${word}`;
   const definition = await getDefinitionFromPage(wordUrl);
   res.send({ word, definition });
 });
 
-router.get("/nums/:num", async function (req, res, next) {
+router.get('/nums/:num', async function (req, res, next) {
   const num = req.params.num;
   const word = await getWordFromPage(num);
   res.json({ num, word });
@@ -41,7 +41,7 @@ export const getWordFromPage = async (num: number) => {
 };
 
 export const getDefinitionFromNum = async (
-  num: number
+  num: number,
 ): Promise<{ word: string; definition: string }> => {
   const $ = await getPage(`${dictionaryUrl}/someword/${num}`);
   return { word: extractWord($), definition: extractDefinition($) };
@@ -53,7 +53,7 @@ export const getFakeDefinition = (): {
 } => {
   const word = getRandomWord();
   const realDefinition =
-    "the real definition the real definition the real definition the real definition the real definition the real definition the real definition the real definition";
+    'the real definition the real definition the real definition the real definition the real definition the real definition the real definition the real definition';
   return { word, definition: realDefinition };
 };
 
@@ -61,7 +61,7 @@ export const getWordAndDefinition = async (): Promise<{
   word: string;
   definition: string;
 }> => {
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     return getFakeDefinition();
   }
   const num = getRandomDictNumber();
@@ -69,23 +69,23 @@ export const getWordAndDefinition = async (): Promise<{
 };
 
 const extractDefinition = ($: CheerioAPI) => {
-  const definition = $(".DivisionDefinition:first")
+  const definition = $('.DivisionDefinition:first')
     .first()
     .contents()
     .filter(
-      (_, elem: any) => elem.name !== "p" && elem.attribs?.class !== "numDef"
+      (_, elem: any) => elem.name !== 'p' && elem.attribs?.class !== 'numDef',
     )
     .text();
   return definition.trim();
 };
 
 export const extractWord = ($: CheerioAPI) => {
-  const words = $("h2.AdresseDefinition")
+  const words = $('h2.AdresseDefinition')
     .first()
     .contents()
     .filter((_, elem) => elem.nodeType === 3) // nodeType === 3 is text
     .text();
-  const word = words.split(",")[0];
+  const word = words.split(',')[0];
   return word.trim();
 };
 

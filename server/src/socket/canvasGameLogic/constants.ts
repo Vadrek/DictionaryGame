@@ -9,4 +9,4 @@ export const PLAYER_SIZE = 5;
 
 // color
 export const COLOR_DURATION = 3; // seconds
-export const TRANSPARENT_COLOR = "#FFFFFF00";
+export const TRANSPARENT_COLOR = '#FFFFFF00';

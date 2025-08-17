@@ -4,7 +4,9 @@
   "scripts": {
     "server": "pnpm --prefix server start",
     "client": "pnpm --prefix client dev",
-    "start": "concurrently 'pnpm run server' 'pnpm run client'"
+    "start": "concurrently 'pnpm run server' 'pnpm run client'",
+    "format": "pnpm --prefix server format && pnpm --prefix client format",
+    "format:fix": "pnpm --prefix server format:fix && pnpm --prefix client format:fix"
   },
   "repository": {
     "type": "git",

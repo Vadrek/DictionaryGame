@@ -5,10 +5,10 @@ import {
   OnDisconnect,
   OnMessage,
   SocketController,
-} from "socket-controllers";
-import { Socket } from "socket.io";
+} from 'socket-controllers';
+import { Socket } from 'socket.io';
 
-import { EMPTY_SQUARE, initBoard } from "../canvasGameLogic/board";
+import { EMPTY_SQUARE, initBoard } from '../canvasGameLogic/board';
 import {
   BOARD_NB_COLS,
   BOARD_NB_ROWS,
@@ -16,14 +16,14 @@ import {
   PIXEL_BY_SQUARE,
   PLAYER_SIZE,
   PLAYER_SPEED,
-} from "../canvasGameLogic/constants";
-import { Square } from "../canvasGameLogic/type";
-import { PlayerCanvas } from "./type";
-import { Service } from "typedi";
+} from '../canvasGameLogic/constants';
+import { Square } from '../canvasGameLogic/type';
+import { PlayerCanvas } from './type';
+import { Service } from 'typedi';
 
 function getRandomColor() {
-  var letters = "0123456789ABCDEF";
-  var color = "#";
+  var letters = '0123456789ABCDEF';
+  var color = '#';
   for (var i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
@@ -55,11 +55,11 @@ export class CanvasController {
       speed: PLAYER_SPEED,
       color: getRandomColor(),
     };
-    socket.emit("init_board", this.board);
+    socket.emit('init_board', this.board);
 
     setInterval(() => {
       this.clearOldColors();
-      socket.emit("update_board", {
+      socket.emit('update_board', {
         players: Object.values(this.players),
         board: this.board,
       });
@@ -71,21 +71,21 @@ export class CanvasController {
     delete this.players[socket.id];
   }
 
-  @OnMessage("move_player")
+  @OnMessage('move_player')
   public movePlayer(
     @ConnectedSocket() socket: Socket,
     @MessageBody()
-    body: { direction: string }
+    body: { direction: string },
   ) {
     this.moveOnePlayer(body.direction, this.players[socket.id]);
     this.colorPlayerSquare(this.players[socket.id]);
   }
 
   public moveOnePlayer(direction: string, player: PlayerCanvas) {
-    if (direction == "UP") player.y -= player.speed;
-    if (direction == "DOWN") player.y += player.speed;
-    if (direction == "LEFT") player.x -= player.speed;
-    if (direction == "RIGHT") player.x += player.speed;
+    if (direction == 'UP') player.y -= player.speed;
+    if (direction == 'DOWN') player.y += player.speed;
+    if (direction == 'LEFT') player.x -= player.speed;
+    if (direction == 'RIGHT') player.x += player.speed;
 
     const borderSize = player.size / 2;
     if (player.y - borderSize <= 0) player.y = borderSize;
@@ -101,7 +101,7 @@ export class CanvasController {
         const square = this.board[r][c];
         if (square.time) {
           const colorExpireDate = new Date(
-            new Date(square.time).getTime() + COLOR_DURATION * 1000
+            new Date(square.time).getTime() + COLOR_DURATION * 1000,
           );
           if (now > colorExpireDate) {
             this.board[r][c] = EMPTY_SQUARE;

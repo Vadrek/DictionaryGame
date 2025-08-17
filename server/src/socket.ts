@@ -1,19 +1,19 @@
-import { SocketControllers } from "socket-controllers";
-import { Server } from "socket.io";
-import { v4 as uuidv4 } from "uuid";
-import { sessionStore } from "./socket/sessionStore";
-import { SocketType } from "./socket/controllers/type";
-import { GameController } from "./socket/controllers/gameController";
-import { Container } from "typedi";
-import { CanvasController } from "./socket/controllers/canvasController";
-import { RoomController } from "./socket/controllers/roomController";
+import { SocketControllers } from 'socket-controllers';
+import { Server } from 'socket.io';
+import { v4 as uuidv4 } from 'uuid';
+import { sessionStore } from './socket/sessionStore';
+import { SocketType } from './socket/controllers/type';
+import { GameController } from './socket/controllers/gameController';
+import { Container } from 'typedi';
+import { CanvasController } from './socket/controllers/canvasController';
+import { RoomController } from './socket/controllers/roomController';
 
 export const socketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
       // origin: `${process.env.FRONT_URL}/*`,
       // origin: "http://localhost:3000"
-      origin: "*",
+      origin: '*',
     },
   });
 
@@ -40,8 +40,8 @@ export const socketServer = (httpServer) => {
     socket.userId = uuidv4();
     socket.username = username;
     socket.score = 0;
-    socket.definitionIdWritten = "";
-    socket.definitionIdChosen = "";
+    socket.definitionIdWritten = '';
+    socket.definitionIdChosen = '';
 
     next();
   });

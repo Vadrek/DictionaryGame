@@ -6,14 +6,14 @@ import {
   OnMessage,
   SocketController,
   SocketIO,
-} from "socket-controllers";
-import { v4 as uuidv4 } from "uuid";
+} from 'socket-controllers';
+import { v4 as uuidv4 } from 'uuid';
 
-import { sessionStore } from "../sessionStore";
-import { Definition, Definitions, Player, Results, SocketType } from "./type";
-import { getRandomUsername } from "../utils";
-import { getWordAndDefinition } from "../../routes";
-import { Service } from "typedi";
+import { sessionStore } from '../sessionStore';
+import { Definition, Definitions, Player, Results, SocketType } from './type';
+import { getRandomUsername } from '../utils';
+import { getWordAndDefinition } from '../../routes';
+import { Service } from 'typedi';
 
 const SCORE_GUESS_RIGHT = 3;
 const SCORE_GET_VOTE = 1;
@@ -32,9 +32,9 @@ export class GameController {
   constructor() {
     this.players = {};
     this.step = 0;
-    this.word = "";
+    this.word = '';
     this.definitions = {};
-    this.realDefinitionId = "";
+    this.realDefinitionId = '';
     this.nbVotes = 0;
     this.results = {};
   }
@@ -57,7 +57,7 @@ export class GameController {
       results: this.results,
       scores: Object.keys(this.players).reduce(
         (acc, userId) => ({ ...acc, [userId]: this.players[userId].score }),
-        {}
+        {},
       ),
     };
   }
@@ -69,7 +69,7 @@ export class GameController {
   @OnConnect()
   public onConnection(
     @ConnectedSocket() socket: SocketType,
-    @SocketIO() io: any
+    @SocketIO() io: any,
   ) {
     const username = socket.username || getRandomUsername();
     this.players[socket.userId] = {
@@ -77,34 +77,34 @@ export class GameController {
       userId: socket.userId,
       username,
       score: socket.score || 0,
-      definitionIdWritten: socket.definitionIdWritten || "",
-      definitionIdChosen: socket.definitionIdChosen || "",
+      definitionIdWritten: socket.definitionIdWritten || '',
+      definitionIdChosen: socket.definitionIdChosen || '',
     };
 
-    socket.emit("connection_accepted", {
+    socket.emit('connection_accepted', {
       ...this.getMyState(socket),
       ...this.getState(),
     });
 
-    socket.emit("store_session", {
+    socket.emit('store_session', {
       sessionId: socket.sessionId,
       userId: socket.userId,
       username,
       score: socket.score,
     });
 
-    io.emit("update_usernames", {
+    io.emit('update_usernames', {
       allUsernames: Object.values(this.players).reduce((acc, player) => {
         return { ...acc, [player.userId]: player.username };
       }, {}),
     });
 
-    socket.broadcast.emit("update_state", {
+    socket.broadcast.emit('update_state', {
       ...this.getState(),
     });
 
-    socket.broadcast.emit("receive_msg", {
-      user: "",
+    socket.broadcast.emit('receive_msg', {
+      user: '',
       msg: `"${username}" s'est connecté !`,
     });
   }
@@ -113,15 +113,15 @@ export class GameController {
   public async onDisconnection(
     @ConnectedSocket()
     socket: SocketType,
-    @SocketIO() io: any
+    @SocketIO() io: any,
   ) {
     const username = this.players[socket.userId].username;
 
     const matchingSockets = await io.in(socket.userId).allSockets();
     const isDisconnected = matchingSockets.size === 0;
     if (isDisconnected) {
-      socket.broadcast.emit("receive_msg", {
-        user: "",
+      socket.broadcast.emit('receive_msg', {
+        user: '',
         msg: `"${username}" s'est déconnecté`,
       });
 
@@ -135,58 +135,58 @@ export class GameController {
       });
       delete this.players[socket.userId];
 
-      socket.broadcast.emit("update_state", {
+      socket.broadcast.emit('update_state', {
         ...this.getState(),
       });
     }
   }
 
-  @OnMessage("change_username")
+  @OnMessage('change_username')
   public changeUsername(
     @ConnectedSocket() socket: SocketType,
     @SocketIO() io: any,
     @MessageBody()
-    body: { username: string }
+    body: { username: string },
   ) {
     const oldUsername = this.players[socket.userId].username;
     this.players[socket.userId].username = body.username;
 
-    io.emit("update_usernames", {
+    io.emit('update_usernames', {
       allUsernames: Object.values(this.players).reduce((acc, player) => {
         return { ...acc, [player.userId]: player.username };
       }, {}),
     });
 
-    io.emit("receive_msg", {
-      user: "",
+    io.emit('receive_msg', {
+      user: '',
       msg: `"${oldUsername}" changed his username to "${body.username}"`,
     });
   }
 
-  @OnMessage("send_msg")
+  @OnMessage('send_msg')
   public answerChat(@SocketIO() io: any, @MessageBody() data: any) {
-    io.emit("receive_msg", data); // broadcast to all
+    io.emit('receive_msg', data); // broadcast to all
   }
 
-  @OnMessage("restart_game")
+  @OnMessage('restart_game')
   public restartGame(@SocketIO() io: any) {
     this.step = 0;
-    this.word = "";
+    this.word = '';
     this.definitions = {};
     this.results = {};
-    this.realDefinitionId = "";
+    this.realDefinitionId = '';
 
     Object.values(this.players).forEach((player) => {
-      player.definitionIdWritten = "";
-      player.definitionIdChosen = "";
+      player.definitionIdWritten = '';
+      player.definitionIdChosen = '';
     });
 
     sessionStore.restartGameSession();
 
-    io.emit("game_restarted", this.getState());
+    io.emit('game_restarted', this.getState());
   }
 
-  @OnMessage("start_game")
+  @OnMessage('start_game')
   public async startGame(@SocketIO() io: any) {
     this.step = 1;
     const { word, definition } = await getWordAndDefinition();
@@ -209,15 +209,15 @@ export class GameController {
       voters: [],
     };
 
-    io.emit("game_started", this.getState());
+    io.emit('game_started', this.getState());
   }
 
-  @OnMessage("write_definition")
+  @OnMessage('write_definition')
   public storeDefinition(
     @ConnectedSocket() socket: SocketType,
     @SocketIO() io: any,
     @MessageBody()
-    body: { definitionContent: string }
+    body: { definitionContent: string },
   ) {
     const definitionId = uuidv4();
     this.players[socket.userId].definitionIdWritten = definitionId;
@@ -242,16 +242,16 @@ export class GameController {
         };
       });
 
-      io.emit("definitions_acquired", this.getState());
+      io.emit('definitions_acquired', this.getState());
     }
   }
 
-  @OnMessage("choose_definition")
+  @OnMessage('choose_definition')
   public chooseDefinition(
     @ConnectedSocket() socket: SocketType,
     @SocketIO() io: any,
     @MessageBody()
-    body: { definition: Definition }
+    body: { definition: Definition },
   ) {
     this.players[socket.userId].definitionIdChosen = body.definition.id;
     this.nbVotes = Object.values(this.players).reduce((acc, player) => {
@@ -263,7 +263,7 @@ export class GameController {
       this.step = 3;
       this.buildResultVotes();
       this.computeScores();
-      io.emit("definitions_chosen", this.getState());
+      io.emit('definitions_chosen', this.getState());
     }
   }
 
