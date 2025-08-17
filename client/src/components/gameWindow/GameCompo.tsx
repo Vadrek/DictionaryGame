@@ -1,4 +1,3 @@
-'use client';
 import React, { useEffect, useState } from 'react';
 
 import { Step1 } from './Step1';
@@ -8,6 +7,7 @@ import { Definitions, Results, SocketType } from './game.types';
 
 import styles from './GameCompo.module.scss';
 import { Button } from '../buttons/buttons';
+import { ScoreDisplay } from './ScoreDisplay';
 
 export const GameCompo = ({
   socket,
@@ -68,7 +68,6 @@ export const GameCompo = ({
     }
   }, [socket]);
 
-  console.log('scores', scores);
   const scoresAndNames = Object.entries(scores)
     .map(([userId, score]) => ({
       userId,
@@ -83,50 +82,45 @@ export const GameCompo = ({
 
   return (
     <div className={styles.mainDiv}>
-      <div className={styles.topDiv}>
-        {step === 0 ? (
-          <Button
-            onClick={() => {
-              socket.emit('start_game');
-            }}
-          >
-            Start Game
-          </Button>
-        ) : (
-          <Button
-            onClick={() => {
-              socket.emit('restart_game');
-            }}
-          >
-            Restart
-          </Button>
-        )}
-
-        <div className={styles.scoresDiv}>
-          <h2>Scores</h2>
-          {scoresAndNames.map(({ userId, name, score }) => (
-            <div key={userId}>
-              {name}: {score}
-            </div>
-          ))}
+      <div className={styles.centerDiv}>
+        <div className="ml-6">
+          {step === 0 ? (
+            <Button
+              onClick={() => {
+                socket.emit('start_game');
+              }}
+            >
+              Start Game
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                socket.emit('restart_game');
+              }}
+            >
+              Restart
+            </Button>
+          )}
         </div>
+
+        {step === 1 && (
+          <Step1
+            socket={socket}
+            word={word}
+            definitionWritten={definitionWritten}
+          />
+        )}
+        {step === 2 && (
+          <Step2
+            socket={socket}
+            word={word}
+            definitions={definitions}
+            definitionIdChosen={definitionIdChosen}
+          />
+        )}
+        {step === 3 && <Step3 word={word} results={results} />}
       </div>
-      {step === 1 && (
-        <Step1
-          socket={socket}
-          word={word}
-          definitionWritten={definitionWritten}
-        />
-      )}
-      {step === 2 && (
-        <Step2
-          socket={socket}
-          word={word}
-          definitions={definitions}
-          definitionIdChosen={definitionIdChosen}
-        />
-      )}
-      {step === 3 && <Step3 word={word} results={results} />}
+      <ScoreDisplay scoresAndNames={scoresAndNames} />
     </div>
   );
 };

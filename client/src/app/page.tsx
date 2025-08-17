@@ -1,37 +1,36 @@
-"use client";
-import { useEffect, useState } from "react";
-import { Col, Form, FormProps, Input, Row } from "antd";
+'use client';
+import { useEffect, useState } from 'react';
 
-import { ChatCompo } from "@/components/chatWindow/ChatCompo";
-import { GameCompo } from "@/components/gameWindow/GameCompo";
-import { useSocket } from "@/socket/hook";
-
-type FieldType = {
-  username?: string;
-};
+import { ChatCompo } from '@/components/chatWindow/ChatCompo';
+import { GameCompo } from '@/components/gameWindow/GameCompo';
+import { useSocket } from '@/socket/hook';
+import { UsernameForm } from '@/components/chatWindow/UsernameForm';
 
 export default function Home() {
   const socket = useSocket();
-  const [username, setUsername] = useState<string>("");
+  const [inputUsername, setInputUsername] = useState('');
+  const [currentUsername, setCurrentUsername] = useState('');
   const [allUsernames, setAllUsernames] = useState<Record<string, string>>({});
-  const [form] = Form.useForm();
+
+  const disabled = currentUsername === inputUsername;
 
   const onConnectionAccepted = ({ myState }: any) => {
     const username = myState.username;
-    setUsername(username);
-    form.setFieldsValue({ username: username });
+    setInputUsername(username);
+    setCurrentUsername(username);
   };
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    if (socket && values.username) {
-      setUsername(values.username);
-      socket.emit("change_username", { username: values.username });
-      sessionStorage.setItem("username", values.username);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newUsername = inputUsername.trim();
+    if (socket && newUsername && !disabled) {
+      setCurrentUsername(newUsername);
+      socket.emit('change_username', { username: newUsername });
+      sessionStorage.setItem('username', newUsername);
     }
   };
 
   const onUpdateUsernames = ({ allUsernames }: any) => {
-    console.log("hey allUsernames", allUsernames);
     setAllUsernames(allUsernames);
   };
 
@@ -40,9 +39,9 @@ export default function Home() {
     // attach the session ID to the next reconnection attempts
     socket.auth = { sessionId, username, score };
     // store it in the localStorage
-    sessionStorage.setItem("sessionId", sessionId);
-    sessionStorage.setItem("username", username);
-    sessionStorage.setItem("score", score);
+    sessionStorage.setItem('sessionId', sessionId);
+    sessionStorage.setItem('username', username);
+    sessionStorage.setItem('score', score);
     // save the ID of the user
     socket.userId = userId;
     socket.username = username;
@@ -51,55 +50,44 @@ export default function Home() {
 
   useEffect(() => {
     if (socket) {
-      const sessionId = sessionStorage.getItem("sessionId");
-      const username = sessionStorage.getItem("username");
-      const score = sessionStorage.getItem("score");
+      const sessionId = sessionStorage.getItem('sessionId');
+      const username = sessionStorage.getItem('username');
+      const score = sessionStorage.getItem('score');
       socket.auth = { sessionId, username, score };
-      socket.on("connection_accepted", onConnectionAccepted);
-      socket.on("update_usernames", onUpdateUsernames);
-      socket.on("store_session", onStoreSession);
+      socket.on('connection_accepted', onConnectionAccepted);
+      socket.on('update_usernames', onUpdateUsernames);
+      socket.on('store_session', onStoreSession);
 
       return () => {
-        socket.off("connection_accepted", onConnectionAccepted);
-        socket.off("update_usernames", onUpdateUsernames);
-        socket.off("store_session", onStoreSession);
+        socket.off('connection_accepted', onConnectionAccepted);
+        socket.off('update_usernames', onUpdateUsernames);
+        socket.off('store_session', onStoreSession);
       };
     }
   }, [socket]);
 
   return (
-    <Row>
-      <Col span={8} style={{ backgroundColor: "aliceblue" }}>
-        <Form
-          form={form}
-          style={{ maxWidth: 300 }}
-          initialValues={{ remember: true, username: username }}
-          onFinish={onFinish}
-        >
-          <Form.Item<FieldType>
-            label="Pseudo"
-            name="username"
-            rules={[{ required: true, message: "your username" }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
+    <div className="flex p-6">
+      <div className="w-1/4 flex flex-col gap-4 h-full max-h-screen">
+        <h1 className="text-4xl font-bold text-white">
+          {/* Jeu du Dictionnaire 📚 */}
+          Jeu du Dictionnaire
+        </h1>
 
-        {`Connectés : ${Object.values(allUsernames).join(", ")}`}
-        <ChatCompo roomId={"23"} username={username} socket={socket} />
-      </Col>
-      <Col span={16}>
+        <UsernameForm
+          inputUsername={inputUsername}
+          setInputUsername={setInputUsername}
+          handleSubmit={handleSubmit}
+          disabled={disabled}
+        />
+
+        <div>{`Connectés : ${Object.values(allUsernames).join(', ')}`}</div>
+
+        <ChatCompo roomId={'23'} username={inputUsername} socket={socket} />
+      </div>
+      <div className="w-3/4 ">
         {socket && <GameCompo socket={socket} allUsernames={allUsernames} />}
-      </Col>
-    </Row>
+      </div>
+    </div>
   );
 }
-
-// export default function Home() {
-//   return (
-//     <>
-//       <h1 className="text-3xl font-bold underline">Hello world!</h1>
-//       <div className="bg-red-500 text-white p-4">Tailwind Test</div>
-//     </>
-//   );
-// }

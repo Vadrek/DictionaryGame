@@ -1,14 +1,7 @@
 import { useState } from 'react';
-import { Form, FormProps } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
-
-import styles from './Step1.module.scss';
-import { SocketType } from './game.types';
 import { Button } from '../buttons/buttons';
-
-type FieldType = {
-  definition: string;
-};
+import { SocketType } from './game.types';
+import { StepContainer } from './StepContainer';
 
 export const Step1 = ({
   socket,
@@ -20,38 +13,62 @@ export const Step1 = ({
   definitionWritten: string;
 }) => {
   const [definition, setDefinition] = useState<string>(definitionWritten);
+  const [draft, setDraft] = useState<string>(definitionWritten);
 
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    setDefinition(values.definition);
-    socket.emit('write_definition', { definitionContent: values.definition });
+  const onSubmit = () => {
+    if (!draft) return;
+    setDefinition(draft);
+    socket.emit('write_definition', { definitionContent: draft });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSubmit();
+    }
   };
 
   return (
-    <div className={styles.container}>
-      <div>{`Mot : ${word}`}</div>
-      <Form onFinish={onFinish}>
-        <Form.Item<FieldType>
-          label="Inventez une définition"
-          name="definition"
-          rules={[
-            { required: true, message: 'Veuillez écrire une définition' },
-          ]}
+    <StepContainer>
+      <div className="text-yellow-400 text-2xl font-bold tracking-wider text-center">
+        Mot : {word}
+      </div>
+
+      <div className="flex flex-col w-full gap-4">
+        <label className="text-lg text-white font-semibold mb-1">
+          Inventez une définition
+        </label>
+        <textarea
+          rows={4}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full bg-gray-800 text-white p-3 rounded-md border-2 border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder-gray-400 resize-none"
+          placeholder="Écrivez votre définition ici... (Shift+Enter pour nouvelle ligne)"
+        />
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={onSubmit}
+          className="self-end"
         >
-          <TextArea rows={4} className={styles.definitionText} />
-        </Form.Item>
-        <Form.Item className={styles.formItem}>
-          <Button variant="secondary" type="submit">
-            Valider
-          </Button>
-        </Form.Item>
-      </Form>
+          Valider
+        </Button>
+      </div>
+
       {definition && (
-        <div className={styles.definitionResultContainer}>
-          <div>Votre définition a été envoyée :</div>
-          <div className={styles.definitionResult}>{definition}</div>
-          <div>En attente des autres définitions...</div>
+        <div className="bg-gray-900 text-white p-4 rounded-md w-full border-2 border-purple-600 mt-4 flex flex-col gap-2 break-words">
+          <div className="text-yellow-300 font-bold">
+            Votre définition a été envoyée :
+          </div>
+          <div className="text-white italic p-2 bg-gray-800 rounded whitespace-pre-wrap break-words">
+            {definition}
+          </div>
+          <div className="text-gray-400 text-sm">
+            En attente des autres définitions...
+          </div>
         </div>
       )}
-    </div>
+    </StepContainer>
   );
 };

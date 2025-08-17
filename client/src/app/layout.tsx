@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 
-import "./globals.css";
+import './globals.css';
+import classNames from 'classnames';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Dictionary Game",
-  description: "A game where you guess the right definition of a word.",
+  title: 'Dictionary Game',
+  description: 'A game where you guess the right definition of a word.',
   icons: {
-    icon: "/images/favicon.ico",
+    icon: '/images/favicon.ico',
   },
 };
 
@@ -20,22 +21,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            Jeu du Dictionnaire 📚
-          </h1>
-        </div>
+      <body
+        className={classNames(
+          inter.className,
+          'h-screen bg-gradient-to-b from-blue-900 to-purple-900',
+        )}
+      >
         {/* <div className="topButtons">
           <Button href="/">Home</Button>
           <Button href="/canvas">Canvas</Button>
-        </div> */}
+          </div> */}
         <main>{children}</main>
       </body>
     </html>

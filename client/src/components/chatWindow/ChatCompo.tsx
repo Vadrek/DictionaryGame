@@ -1,6 +1,4 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import style from './ChatCompo.module.scss';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button } from '../buttons/buttons';
 
 interface IMsgDataTypes {
@@ -8,79 +6,78 @@ interface IMsgDataTypes {
   msg: string;
 }
 
-export const ChatCompo = ({ username, roomId, socket }: any) => {
+interface ChatProps {
+  username: string;
+  roomId: string;
+  socket: any;
+}
+
+export const ChatCompo = ({ username, roomId, socket }: ChatProps) => {
   const [currentMsg, setCurrentMsg] = useState('');
   const [chat, setChat] = useState<IMsgDataTypes[]>([]);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const sendData = async (e: React.FormEvent<HTMLFormElement>) => {
+  const sendData = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (currentMsg !== '') {
-      const msgData: IMsgDataTypes = {
-        user: username,
-        msg: currentMsg,
-      };
-      socket.emit('send_msg', msgData);
-      setCurrentMsg('');
-    }
+    if (currentMsg.trim() === '') return;
+    const msgData: IMsgDataTypes = { user: username, msg: currentMsg };
+    socket.emit('send_msg', msgData);
+    setCurrentMsg('');
   };
 
   const onReceiveMsg = (data: IMsgDataTypes) => {
-    setChat((pre) => [...pre, data]);
-    const objDiv = document.getElementById('chatMessages');
-    if (objDiv) {
-      objDiv.scrollTop = objDiv.scrollHeight;
-    }
+    setChat((prev) => [...prev, data]);
   };
 
   useEffect(() => {
-    if (socket == null) return;
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat]);
+
+  useEffect(() => {
+    if (!socket) return;
     socket.on('receive_msg', onReceiveMsg);
-    return () => {
-      socket.off('receive_msg', onReceiveMsg);
-    };
+    return () => socket.off('receive_msg', onReceiveMsg);
   }, [socket]);
 
   return (
-    <div className={style.chat_div}>
-      <div className={style.chat_border}>
-        <div style={{ marginBottom: '1rem' }}></div>
-        <div id="chatMessages" className={style.chatMessages}>
-          {chat.map(({ user, msg }, key) => (
+    <div className="flex flex-col bg-gradient-to-b from-gray-900 to-black rounded-lg p-4 shadow-lg h-[400px] max-h-full w-full">
+      {/* Chat messages */}
+      <div className="flex-1 overflow-y-auto mb-4 space-y-2">
+        {chat.map(({ user, msg }, idx) => (
+          <div
+            key={idx}
+            className={`flex items-end ${
+              user === username ? 'justify-end' : 'justify-start'
+            }`}
+          >
             <div
-              key={key}
-              className={
-                user == username
-                  ? style.chatProfileRight
-                  : style.chatProfileLeft
-              }
+              className={`px-3 py-1 rounded-xl max-w-[70%] break-words ${
+                user === username
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-blue-600 text-white'
+              }`}
             >
-              <span
-                className={style.chatProfileSpan}
-                style={{ textAlign: user == username ? 'right' : 'left' }}
-              >
-                {user.charAt(0)}
-              </span>
-              <p style={{ textAlign: user == username ? 'right' : 'left' }}>
-                {msg}
-              </p>
+              <p className="text-sm font-bold">{user}</p>
+              <p className="text-sm">{msg}</p>
             </div>
-          ))}
-        </div>
-        <div>
-          <form onSubmit={(e) => sendData(e)}>
-            <input
-              className={style.chat_input}
-              type="text"
-              value={currentMsg}
-              placeholder="Votre message..."
-              onChange={(e) => setCurrentMsg(e.target.value)}
-            />
-            <Button variant="secondary" type="submit" size="small">
-              Envoyer
-            </Button>
-          </form>
-        </div>
+          </div>
+        ))}
+        <div ref={chatEndRef}></div>
       </div>
+
+      {/* Input area */}
+      <form className="flex gap-2" onSubmit={sendData}>
+        <input
+          type="text"
+          placeholder="Votre message..."
+          value={currentMsg}
+          onChange={(e) => setCurrentMsg(e.target.value)}
+          className="flex-1 bg-gray-800 text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <Button variant="secondary" type="submit" size="small">
+          Envoyer
+        </Button>
+      </form>
     </div>
   );
 };
