@@ -11,8 +11,8 @@ import { Service } from "typedi";
 @Service()
 @SocketController()
 export class RoomController {
-  @OnMessage("join_game")
-  public async joinGame(
+  @OnMessage("join_room")
+  public async joinRoom(
     @SocketIO() io: Server,
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: any
@@ -35,12 +35,20 @@ export class RoomController {
       await socket.join(message.roomId);
       socket.emit("room_joined");
 
-      if (io.sockets.adapter.rooms.get(message.roomId).size === 2) {
-        socket.emit("start_game", { start: true, symbol: "x" });
-        socket
-          .to(message.roomId)
-          .emit("start_game", { start: false, symbol: "o" });
-      }
+      // if (io.sockets.adapter.rooms.get(message.roomId).size === 2) {
+      //   socket.emit("start_game", { start: true, symbol: "x" });
+      //   socket
+      //     .to(message.roomId)
+      //     .emit("start_game", { start: false, symbol: "o" });
+      // }
     }
+  }
+
+  @OnMessage("leave_room")
+  public async leaveRoom(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() message: any
+  ) {
+    await socket.leave(message.roomId);
   }
 }

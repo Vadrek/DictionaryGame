@@ -1,12 +1,10 @@
 {
-  "name": "dictionarygame",
+  "name": "dictionary-game",
   "version": "1.0.0",
-  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
-  "main": "index.js",
   "scripts": {
     "server": "pnpm --prefix server start",
     "client": "pnpm --prefix client dev",
-    "dev": "concurrently 'pnpm run server' 'pnpm run client'"
+    "start": "concurrently 'pnpm run server' 'pnpm run client'"
   },
   "repository": {
     "type": "git",

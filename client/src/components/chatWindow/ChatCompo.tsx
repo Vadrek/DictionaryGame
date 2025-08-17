@@ -1,6 +1,7 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import style from "./ChatCompo.module.scss";
+'use client';
+import React, { useEffect, useState } from 'react';
+import style from './ChatCompo.module.scss';
+import { Button } from '../buttons/buttons';
 
 interface IMsgDataTypes {
   user: string;
@@ -8,24 +9,24 @@ interface IMsgDataTypes {
 }
 
 export const ChatCompo = ({ username, roomId, socket }: any) => {
-  const [currentMsg, setCurrentMsg] = useState("");
+  const [currentMsg, setCurrentMsg] = useState('');
   const [chat, setChat] = useState<IMsgDataTypes[]>([]);
 
   const sendData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (currentMsg !== "") {
+    if (currentMsg !== '') {
       const msgData: IMsgDataTypes = {
         user: username,
         msg: currentMsg,
       };
-      socket.emit("send_msg", msgData);
-      setCurrentMsg("");
+      socket.emit('send_msg', msgData);
+      setCurrentMsg('');
     }
   };
 
   const onReceiveMsg = (data: IMsgDataTypes) => {
     setChat((pre) => [...pre, data]);
-    const objDiv = document.getElementById("chatMessages");
+    const objDiv = document.getElementById('chatMessages');
     if (objDiv) {
       objDiv.scrollTop = objDiv.scrollHeight;
     }
@@ -33,16 +34,16 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
 
   useEffect(() => {
     if (socket == null) return;
-    socket.on("receive_msg", onReceiveMsg);
+    socket.on('receive_msg', onReceiveMsg);
     return () => {
-      socket.off("receive_msg", onReceiveMsg);
+      socket.off('receive_msg', onReceiveMsg);
     };
   }, [socket]);
 
   return (
     <div className={style.chat_div}>
       <div className={style.chat_border}>
-        <div style={{ marginBottom: "1rem" }}></div>
+        <div style={{ marginBottom: '1rem' }}></div>
         <div id="chatMessages" className={style.chatMessages}>
           {chat.map(({ user, msg }, key) => (
             <div
@@ -55,11 +56,11 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
             >
               <span
                 className={style.chatProfileSpan}
-                style={{ textAlign: user == username ? "right" : "left" }}
+                style={{ textAlign: user == username ? 'right' : 'left' }}
               >
                 {user.charAt(0)}
               </span>
-              <p style={{ textAlign: user == username ? "right" : "left" }}>
+              <p style={{ textAlign: user == username ? 'right' : 'left' }}>
                 {msg}
               </p>
             </div>
@@ -74,7 +75,9 @@ export const ChatCompo = ({ username, roomId, socket }: any) => {
               placeholder="Votre message..."
               onChange={(e) => setCurrentMsg(e.target.value)}
             />
-            <button className={style.chat_button}>Envoyer</button>
+            <Button variant="secondary" type="submit" size="small">
+              Envoyer
+            </Button>
           </form>
         </div>
       </div>

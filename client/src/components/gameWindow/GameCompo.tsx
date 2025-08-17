@@ -1,13 +1,13 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Button } from "antd";
+'use client';
+import React, { useEffect, useState } from 'react';
 
-import { Step1 } from "./Step1";
-import { Step2 } from "./Step2";
-import { Step3 } from "./Step3";
-import { Definitions, Results, SocketType } from "./game.types";
+import { Step1 } from './Step1';
+import { Step2 } from './Step2';
+import { Step3 } from './Step3';
+import { Definitions, Results, SocketType } from './game.types';
 
-import styles from "./GameCompo.module.scss";
+import styles from './GameCompo.module.scss';
+import { Button } from '../buttons/buttons';
 
 export const GameCompo = ({
   socket,
@@ -18,10 +18,10 @@ export const GameCompo = ({
 }) => {
   const [step, setStep] = useState<number>(0);
   const [definitions, setDefinitions] = useState<Definitions>({});
-  const [word, setWord] = useState<string>("");
+  const [word, setWord] = useState<string>('');
   const [results, setResults] = useState<Results>({});
-  const [definitionWritten, setDefinitionWritten] = useState<string>("");
-  const [definitionIdChosen, setDefinitionIdChosen] = useState<string>("");
+  const [definitionWritten, setDefinitionWritten] = useState<string>('');
+  const [definitionIdChosen, setDefinitionIdChosen] = useState<string>('');
   const [scores, setScores] = useState<Record<string, number>>({});
 
   const updateState = ({
@@ -46,12 +46,12 @@ export const GameCompo = ({
   };
 
   const eventList = [
-    "connection_accepted",
-    "game_restarted",
-    "game_started",
-    "definitions_acquired",
-    "definitions_chosen",
-    "update_state",
+    'connection_accepted',
+    'game_restarted',
+    'game_started',
+    'definitions_acquired',
+    'definitions_chosen',
+    'update_state',
   ];
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export const GameCompo = ({
     }
   }, [socket]);
 
-  console.log("scores", scores);
+  console.log('scores', scores);
   const scoresAndNames = Object.entries(scores)
     .map(([userId, score]) => ({
       userId,
@@ -86,9 +86,8 @@ export const GameCompo = ({
       <div className={styles.topDiv}>
         {step === 0 ? (
           <Button
-            type="primary"
             onClick={() => {
-              socket.emit("start_game");
+              socket.emit('start_game');
             }}
           >
             Start Game
@@ -96,7 +95,7 @@ export const GameCompo = ({
         ) : (
           <Button
             onClick={() => {
-              socket.emit("restart_game");
+              socket.emit('restart_game');
             }}
           >
             Restart

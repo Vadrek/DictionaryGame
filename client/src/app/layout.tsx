@@ -28,7 +28,9 @@ export default function RootLayout({
             marginTop: "20px",
           }}
         >
-          <h1 style={{ justifyContent: "center" }}>Jeu du Dictionnaire 📚</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">
+            Jeu du Dictionnaire 📚
+          </h1>
         </div>
         {/* <div className="topButtons">
           <Button href="/">Home</Button>

@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Button, Form, FormProps } from "antd";
-import TextArea from "antd/es/input/TextArea";
+import { useState } from 'react';
+import { Form, FormProps } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
 
-import styles from "./Step1.module.scss";
-import { SocketType } from "./game.types";
+import styles from './Step1.module.scss';
+import { SocketType } from './game.types';
+import { Button } from '../buttons/buttons';
 
 type FieldType = {
   definition: string;
@@ -20,9 +21,9 @@ export const Step1 = ({
 }) => {
   const [definition, setDefinition] = useState<string>(definitionWritten);
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
     setDefinition(values.definition);
-    socket.emit("write_definition", { definitionContent: values.definition });
+    socket.emit('write_definition', { definitionContent: values.definition });
   };
 
   return (
@@ -33,13 +34,13 @@ export const Step1 = ({
           label="Inventez une définition"
           name="definition"
           rules={[
-            { required: true, message: "Veuillez écrire une définition" },
+            { required: true, message: 'Veuillez écrire une définition' },
           ]}
         >
           <TextArea rows={4} className={styles.definitionText} />
         </Form.Item>
         <Form.Item className={styles.formItem}>
-          <Button type="primary" htmlType="submit">
+          <Button variant="secondary" type="submit">
             Valider
           </Button>
         </Form.Item>
