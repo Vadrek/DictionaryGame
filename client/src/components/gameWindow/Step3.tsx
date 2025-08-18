@@ -42,7 +42,7 @@ export const Step3 = ({
         Mot : {word}
       </div>
 
-      <div className="flex flex-col gap-3 w-full">
+      <div className="flex flex-col gap-3 w-full min-h-0 overflow-y-auto ">
         {dataSource.map((definition) => (
           <div
             key={definition.key}

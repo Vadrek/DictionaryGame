@@ -5,7 +5,6 @@ import { Step2 } from './Step2';
 import { Step3 } from './Step3';
 import { Definitions, Results, SocketType } from './game.types';
 
-import styles from './GameCompo.module.scss';
 import { Button } from '../buttons/buttons';
 import { ScoreDisplay } from './ScoreDisplay';
 
@@ -81,8 +80,8 @@ export const GameCompo = ({
     });
 
   return (
-    <div className={styles.mainDiv}>
-      <div className={styles.centerDiv}>
+    <div className="flex flex-1">
+      <div className="flex flex-col flex-1">
         <div className="ml-6">
           {step === 0 ? (
             <Button

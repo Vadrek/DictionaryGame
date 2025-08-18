@@ -67,8 +67,8 @@ export default function Home() {
   }, [socket]);
 
   return (
-    <div className="flex p-6">
-      <div className="w-1/4 flex flex-col gap-4 h-full max-h-screen">
+    <div className="flex p-6 h-screen">
+      <div className="w-1/4 flex flex-col gap-4">
         <h1 className="text-4xl font-bold text-white">
           {/* Jeu du Dictionnaire 📚 */}
           Jeu du Dictionnaire
@@ -85,7 +85,7 @@ export default function Home() {
 
         <ChatCompo roomId={'23'} username={inputUsername} socket={socket} />
       </div>
-      <div className="w-3/4 ">
+      <div className="w-3/4 flex flex-1 ">
         {socket && <GameCompo socket={socket} allUsernames={allUsernames} />}
       </div>
     </div>

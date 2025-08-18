@@ -40,7 +40,7 @@ export const ChatCompo = ({ username, roomId, socket }: ChatProps) => {
   }, [socket]);
 
   return (
-    <div className="flex flex-col bg-gradient-to-b from-gray-900 to-black rounded-lg p-4 shadow-lg h-[400px] max-h-full w-full">
+    <div className="flex flex-col flex-1 min-h-0 bg-gradient-to-b from-gray-900 to-black rounded-lg p-4 shadow-lg w-full">
       {/* Chat messages */}
       <div className="flex-1 overflow-y-auto mb-4 space-y-2">
         {chat.map(({ user, msg }, idx) => (
