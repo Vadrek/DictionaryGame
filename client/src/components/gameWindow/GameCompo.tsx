@@ -47,7 +47,6 @@ export const GameCompo = ({
 
   const eventList = [
     'connection_accepted',
-    'game_restarted',
     'game_started',
     'definitions_acquired',
     'definitions_chosen',
@@ -87,7 +86,7 @@ export const GameCompo = ({
           {step === 0 ? (
             <Button
               onClick={() => {
-                fetch(SERVER_URL);
+                fetch(SERVER_URL); // To avoid server to be inactive and reset
                 socket.emit('start_game');
               }}
             >
@@ -96,7 +95,7 @@ export const GameCompo = ({
           ) : (
             <Button
               onClick={() => {
-                fetch(SERVER_URL);
+                fetch(SERVER_URL); // To avoid server to be inactive and reset
                 socket.emit('restart_game');
               }}
             >

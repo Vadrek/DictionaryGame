@@ -2,13 +2,14 @@ import express from 'express';
 import axios from 'axios';
 import { CheerioAPI, load as cheerioLoad } from 'cheerio';
 import { getRandomWord } from '../socket/utils';
+import { io } from '../server';
 
 const router = express.Router();
 
 const dictionaryUrl = 'https://www.larousse.fr/dictionnaires/francais';
 const MAX_WORDS = 83296;
 
-router.get('/', function (req, res) {
+router.get('/', function (_, res) {
   res.send('Hello Boy!!');
 });
 
@@ -19,10 +20,15 @@ router.get('/word/:word', async function (req, res) {
   res.send({ word, definition });
 });
 
-router.get('/nums/:num', async function (req, res, next) {
+router.get('/nums/:num', async function (req, res) {
   const num = req.params.num;
   const word = await getWordFromPage(num);
   res.json({ num, word });
+});
+
+router.get('/reset', async function (_, res) {
+  io.emit('reset_sockets', { message: 'System reset triggered' });
+  res.json({ ok: true });
 });
 
 const getPage = async (url: string) => {

@@ -48,6 +48,12 @@ export default function Home() {
     socket.score = score;
   };
 
+  const onResetSockets = () => {
+    const url = new URL(window.location.href);
+    url.pathname = '/logout';
+    window.location.replace(url.toString());
+  };
+
   useEffect(() => {
     if (socket) {
       const sessionId = sessionStorage.getItem('sessionId');
@@ -57,11 +63,13 @@ export default function Home() {
       socket.on('connection_accepted', onConnectionAccepted);
       socket.on('update_usernames', onUpdateUsernames);
       socket.on('store_session', onStoreSession);
+      socket.on('reset_sockets', onResetSockets);
 
       return () => {
         socket.off('connection_accepted', onConnectionAccepted);
         socket.off('update_usernames', onUpdateUsernames);
         socket.off('store_session', onStoreSession);
+        socket.off('reset_sockets', onResetSockets);
       };
     }
   }, [socket]);
