@@ -1,13 +1,14 @@
-import { SocketType } from "@/components/gameWindow/game.types";
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import { SocketType } from '@/components/gameWindow/game.types';
+import { useEffect, useState } from 'react';
+import io from 'socket.io-client';
 
+export const SERVER_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9000';
 export function useSocket() {
   const [socket, setSocket] = useState<SocketType | null>(null);
-  const server_url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
 
   useEffect(() => {
-    const socketIo = io(server_url);
+    const socketIo = io(SERVER_URL);
 
     setSocket(socketIo);
 

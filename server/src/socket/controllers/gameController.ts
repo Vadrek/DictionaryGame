@@ -169,7 +169,7 @@ export class GameController {
   }
 
   @OnMessage('restart_game')
-  public restartGame(@SocketIO() io: any) {
+  public async restartGame(@SocketIO() io: any) {
     this.step = 0;
     this.word = '';
     this.definitions = {};
@@ -182,8 +182,7 @@ export class GameController {
     });
 
     sessionStore.restartGameSession();
-
-    io.emit('game_restarted', this.getState());
+    await this.startGame(io);
   }
 
   @OnMessage('start_game')

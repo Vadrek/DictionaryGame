@@ -7,6 +7,7 @@ import { Definitions, Results, SocketType } from './game.types';
 
 import { Button } from '../buttons/buttons';
 import { ScoreDisplay } from './ScoreDisplay';
+import { SERVER_URL } from '@/socket/hook';
 
 export const GameCompo = ({
   socket,
@@ -86,6 +87,7 @@ export const GameCompo = ({
           {step === 0 ? (
             <Button
               onClick={() => {
+                fetch(SERVER_URL);
                 socket.emit('start_game');
               }}
             >
@@ -94,6 +96,7 @@ export const GameCompo = ({
           ) : (
             <Button
               onClick={() => {
+                fetch(SERVER_URL);
                 socket.emit('restart_game');
               }}
             >
