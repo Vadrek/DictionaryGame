@@ -1,5 +1,4 @@
 import { Results } from './game.types';
-import { StepContainer } from './StepContainer';
 
 type DataSource = {
   key: string;
@@ -40,7 +39,7 @@ export const Step3 = ({
   const winners = goodAnswers.length > 0 ? goodAnswers[0].voters : 'personne !';
 
   return (
-    <StepContainer>
+    <>
       <div className="text-yellow-400 text-2xl font-bold tracking-wider text-center">
         Mot : {word}
       </div>
@@ -74,6 +73,6 @@ export const Step3 = ({
           (Voter pour la bonne réponse = 3 points, recevoir un vote = 1 point)
         </p>
       </div>
-    </StepContainer>
+    </>
   );
 };

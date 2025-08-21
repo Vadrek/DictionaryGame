@@ -104,22 +104,24 @@ export const GameCompo = ({
           )}
         </div>
 
-        {step === 1 && (
-          <Step1
-            socket={socket}
-            word={word}
-            definitionWritten={definitionWritten}
-          />
-        )}
-        {step === 2 && (
-          <Step2
-            socket={socket}
-            word={word}
-            definitions={definitions}
-            definitionIdChosen={definitionIdChosen}
-          />
-        )}
-        {step === 3 && <Step3 word={word} results={results} />}
+        <div className="flex flex-col min-h-0 items-center gap-6 p-6 ml-6 mr-6 mt-6 bg-gradient-to-b from-purple-900 to-black rounded-lg shadow-lg">
+          {step === 1 && (
+            <Step1
+              socket={socket}
+              word={word}
+              definitionWritten={definitionWritten}
+            />
+          )}
+          {step === 2 && (
+            <Step2
+              socket={socket}
+              word={word}
+              definitions={definitions}
+              definitionIdChosen={definitionIdChosen}
+            />
+          )}
+          {step === 3 && <Step3 word={word} results={results} />}
+        </div>
       </div>
       <ScoreDisplay scoresAndNames={scoresAndNames} />
     </div>

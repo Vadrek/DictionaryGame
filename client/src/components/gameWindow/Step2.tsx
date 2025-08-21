@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Definition, Definitions, SocketType } from './game.types';
-import { StepContainer } from './StepContainer';
 
 export const Step2 = ({
   socket,
@@ -25,7 +24,7 @@ export const Step2 = ({
   };
 
   return (
-    <StepContainer>
+    <>
       <div className="text-yellow-400 text-2xl font-bold tracking-wider text-center">
         Mot : {word}
       </div>
@@ -48,6 +47,6 @@ export const Step2 = ({
           );
         })}
       </div>
-    </StepContainer>
+    </>
   );
 };
