@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button } from '../buttons/buttons';
+import classNames from 'classnames';
 
-interface IMsgDataTypes {
+interface MessageData {
   user: string;
   msg: string;
 }
@@ -14,18 +15,18 @@ interface ChatProps {
 
 export const ChatCompo = ({ username, roomId, socket }: ChatProps) => {
   const [currentMsg, setCurrentMsg] = useState('');
-  const [chat, setChat] = useState<IMsgDataTypes[]>([]);
+  const [chat, setChat] = useState<MessageData[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const sendData = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (currentMsg.trim() === '') return;
-    const msgData: IMsgDataTypes = { user: username, msg: currentMsg };
+    const msgData: MessageData = { user: username, msg: currentMsg };
     socket.emit('send_msg', msgData);
     setCurrentMsg('');
   };
 
-  const onReceiveMsg = (data: IMsgDataTypes) => {
+  const onReceiveMsg = (data: MessageData) => {
     setChat((prev) => [...prev, data]);
   };
 
@@ -51,11 +52,14 @@ export const ChatCompo = ({ username, roomId, socket }: ChatProps) => {
             }`}
           >
             <div
-              className={`px-3 py-1 rounded-xl max-w-[70%] break-words ${
-                user === username
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-blue-600 text-white'
-              }`}
+              className={classNames(
+                'px-3 py-1 rounded-xl max-w-[70%] break-words',
+                {
+                  'text-white': !user,
+                  'bg-purple-600 text-white': user && user === username,
+                  'bg-blue-600 text-white': user && user !== username,
+                },
+              )}
             >
               <p className="text-sm font-bold">{user}</p>
               <p className="text-sm">{msg}</p>
@@ -72,7 +76,7 @@ export const ChatCompo = ({ username, roomId, socket }: ChatProps) => {
           placeholder="Votre message..."
           value={currentMsg}
           onChange={(e) => setCurrentMsg(e.target.value)}
-          className="flex-1 bg-gray-800 text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="flex-1 w-full bg-gray-800 text-white rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
         <Button variant="secondary" type="submit" size="small">
           Envoyer

@@ -30,6 +30,9 @@ export const Step3 = ({
     .sort((a: any, b: any) => {
       if (a.isReal) return -1;
       if (b.isReal) return 1;
+      if (a.voters.length !== b.voters.length) {
+        return b.voters.length - a.voters.length;
+      }
       return a.content > b.content ? 1 : -1;
     });
 
@@ -49,7 +52,7 @@ export const Step3 = ({
             className={`p-2 rounded-lg border-2 transition-all duration-200 
               ${
                 definition.isReal
-                  ? 'bg-green-600 border-green-400 text-white shadow-[0_0_10px_#22c55e]'
+                  ? 'bg-green-800 border-green-400 text-white shadow-[0_0_10px_#22c55e]'
                   : 'bg-gray-800 border-purple-600 text-white hover:bg-purple-700 hover:shadow-[0_0_8px_#a855f7]'
               }`}
           >
@@ -65,8 +68,11 @@ export const Step3 = ({
       </div>
 
       <div className="mt-4 text-white text-lg text-center p-3 bg-gray-900 rounded-lg shadow-inner">
-        La bonne réponse a été trouvée par :{' '}
+        {`La bonne réponse a été trouvée par : `}
         <span className="font-bold text-yellow-400">{winners}</span>
+        <p>
+          (Voter pour la bonne réponse = 3 points, recevoir un vote = 1 point)
+        </p>
       </div>
     </StepContainer>
   );

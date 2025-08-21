@@ -159,7 +159,7 @@ export class GameController {
 
     io.emit('receive_msg', {
       user: '',
-      msg: `"${oldUsername}" changed his username to "${body.username}"`,
+      msg: `"${oldUsername}" s'appelle désormais "${body.username}"`,
     });
   }
 

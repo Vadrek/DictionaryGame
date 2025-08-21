@@ -16,7 +16,7 @@ export const ScoreDisplay = ({ scoresAndNames }: Props) => {
         {scoresAndNames.map(({ userId, name, score }) => (
           <div
             key={userId}
-            className="flex justify-between items-center px-4 py-2 rounded-lg bg-gray-800 text-white font-mono text-lg hover:bg-gray-700 transition"
+            className="flex justify-between items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white font-mono text-lg hover:bg-gray-700 transition"
           >
             <span className="text-purple-300">{name}</span>
             <span className="font-bold text-yellow-400">{score}</span>
