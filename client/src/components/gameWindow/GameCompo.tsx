@@ -1,83 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Step1 } from './Step1';
 import { Step2 } from './Step2';
 import { Step3 } from './Step3';
-import { Definitions, Results, SocketType } from './game.types';
 
 import { Button } from '../buttons/buttons';
 import { ScoreDisplay } from './ScoreDisplay';
 import { SERVER_URL } from '@/socket/hook';
+import { useGame } from '@/app/GameContext';
 
-export const GameCompo = ({
-  socket,
-  allUsernames,
-}: {
-  socket: SocketType;
-  allUsernames: Record<string, string>;
-}) => {
-  const [step, setStep] = useState<number>(0);
-  const [definitions, setDefinitions] = useState<Definitions>({});
-  const [word, setWord] = useState<string>('');
-  const [results, setResults] = useState<Results>({});
-  const [definitionWritten, setDefinitionWritten] = useState<string>('');
-  const [definitionIdChosen, setDefinitionIdChosen] = useState<string>('');
-  const [scores, setScores] = useState<Record<string, number>>({});
-
-  const updateState = ({
-    step: currentStep,
-    word: currentWord,
-    definitions: currentDefinitions,
-    // players: currentPlayers,
-    results: currentResults,
-    scores: currentScores,
-    myState,
-  }: any) => {
-    if (myState) {
-      const { definitionIdChosen, userId } = myState;
-      setDefinitionWritten(currentDefinitions[userId]?.content);
-      setDefinitionIdChosen(definitionIdChosen);
-    }
-    setStep(currentStep);
-    setWord(currentWord);
-    setDefinitions(currentDefinitions);
-    setResults(currentResults);
-    setScores(currentScores);
-  };
-
-  const eventList = [
-    'connection_accepted',
-    'game_started',
-    'definitions_acquired',
-    'definitions_chosen',
-    'update_state',
-  ];
-
-  useEffect(() => {
-    if (socket) {
-      eventList.forEach((event) => {
-        socket.on(event, updateState);
-      });
-
-      return () => {
-        eventList.forEach((event) => {
-          socket.off(event, updateState);
-        });
-      };
-    }
-  }, [socket]);
-
-  const scoresAndNames = Object.entries(scores)
-    .map(([userId, score]) => ({
-      userId,
-      score,
-      name: allUsernames[userId],
-    }))
-    .sort((a, b) => {
-      if (a.score > b.score) return -1;
-      if (a.score < b.score) return 1;
-      return a.name.localeCompare(b.name);
-    });
+export const GameCompo = () => {
+  const {
+    step,
+    word,
+    definitions,
+    results,
+    definitionWritten,
+    definitionIdChosen,
+    socket,
+  } = useGame();
 
   return (
     <div className="flex flex-1">
@@ -104,7 +45,7 @@ export const GameCompo = ({
           )}
         </div>
 
-        <div className="flex flex-col min-h-0 items-center gap-6 p-6 ml-6 mr-6 mt-6 bg-gradient-to-b from-purple-900 to-black rounded-lg shadow-lg">
+        <div className="flex flex-1 flex-col min-h-0 overflow-y-auto items-center gap-6 p-6 ml-6 mr-6 mt-6 bg-gradient-to-b from-purple-900 to-black rounded-lg shadow-lg">
           {step === 1 && (
             <Step1
               socket={socket}
@@ -123,7 +64,7 @@ export const GameCompo = ({
           {step === 3 && <Step3 word={word} results={results} />}
         </div>
       </div>
-      <ScoreDisplay scoresAndNames={scoresAndNames} />
+      <ScoreDisplay />
     </div>
   );
 };

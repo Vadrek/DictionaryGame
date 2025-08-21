@@ -1,12 +1,20 @@
-type Props = {
-  scoresAndNames: {
-    userId: string;
-    score: number;
-    name: string;
-  }[];
-};
+import { useGame } from '@/app/GameContext';
 
-export const ScoreDisplay = ({ scoresAndNames }: Props) => {
+export const ScoreDisplay = () => {
+  const { allUsernames, scores } = useGame();
+
+  const scoresAndNames = Object.entries(scores)
+    .map(([userId, score]) => ({
+      userId,
+      score,
+      name: allUsernames[userId],
+    }))
+    .sort((a, b) => {
+      if (a.score > b.score) return -1;
+      if (a.score < b.score) return 1;
+      return a.name.localeCompare(b.name);
+    });
+
   return (
     <div className="self-start bg-gray-900 p-6 rounded-2xl shadow-lg border-2 border-purple-600">
       <h2 className="text-2xl font-bold text-purple-400 text-center mb-4">

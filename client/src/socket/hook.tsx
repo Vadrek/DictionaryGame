@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 
 export const SERVER_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9000';
+
 export function useSocket() {
   const [socket, setSocket] = useState<SocketType | null>(null);
 
